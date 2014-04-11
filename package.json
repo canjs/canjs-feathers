@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/feathersjs/canjs-feathers/issues"
   },
-  "homepage": "https://github.com/feathersjs/canjs-feathers"
+  "homepage": "https://github.com/feathersjs/canjs-feathers",
+  "devDependencies": {
+    "feathers": "^0.4.0"
+  }
 }
