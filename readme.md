@@ -15,13 +15,21 @@ Once set up you have to connect to the Feathers server:
 ```js
 // connects to the current host via SocketIO
 can.Feathers.connect();
+
 // connects to todos.feathersjs.com
 can.Feathers.connect('http://todos.feathersjs.com');
+
+// connects to current host with custom token auth.
+can.Feathers.connect('',{
+  query: 'token=<custom-token-here>'
+});
+
 // connect to my.app.com using Primus
 can.Feathers.connect({
   host: 'http://my.app',
   type: 'primus'
 });
+
 ```
 
 To create a model you can use the shorthand `can.Feathers.model`:
