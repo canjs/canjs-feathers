@@ -20,11 +20,10 @@
     "test",
     "tests"
   ],
-  "dependencies": {
-    "canjs": "~2.0.7",
-    "jquery": "~2.1.0"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "canjs": "~2.0.7",
+    "jquery": "~2.1.0",
     "mocha": "~1.18.2",
     "assert": "~0.0.2"
   }
