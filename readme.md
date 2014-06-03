@@ -39,11 +39,11 @@ To create a model you can use the shorthand `can.Feathers.model`:
 var Todo = can.Feathers.model('/todos');
 ```
 
-Or extend `can.Feathers.Model` and set the `service` static property:
+Or extend `can.Feathers.Model` and set the `resource` static property:
 
 ```js
 var Todo = can.Feathers.Model.extend({
-  service: 'todos'
+  resource: 'todos'
 }, {});
 ```
 
