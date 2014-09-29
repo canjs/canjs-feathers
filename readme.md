@@ -10,25 +10,28 @@ The easiest way to obtain the plugin is through Bower:
 
 Or [download the JavaScript]() and put it in your CanJS project folder.
 
-Once set up you have to connect to the Feathers server:
+To use it, you first need to make a connection to your socket server.  Make sure you already have your socket script loaded.  Here are some example connections:
 
 ```js
-// connects to the current host via SocketIO
-can.Feathers.connect();
 
-// connects to todos.feathersjs.com
-can.Feathers.connect('http://todos.feathersjs.com');
+// Example socket connection. Connect to the current host via SocketIO
+var socket = io();
 
-// connects to current host with custom token auth.
-can.Feathers.connect('',{
-  query: 'token=<custom-token-here>'
+// Example socket connection. Connect to todos.feathersjs.com
+var socket = io('http://todos.feathersjs.com');
+
+// Example socket connection. Connect to current host with custom token auth and transports.
+var socket = io('',{
+  query: 'token=<custom-token-here>',
+  transports:['websocket']
 });
 
-// connect to my.app.com using Primus
-can.Feathers.connect({
-  host: 'http://my.app',
-  type: 'primus'
-});
+// Example socket connection. Connect to my.app.com using Primus
+var socket = Primus.connect('ws://my.app.com');
+
+
+// Once you have connected, you use that socket connection like this:
+can.Feathers.connect(socket);
 
 ```
 
