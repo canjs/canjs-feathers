@@ -56,7 +56,6 @@
           return Todo.findAll();
         })
         .then(function (todos) {
-          console.log(todos);
           assert.equal(todos.length, 1, 'Got one todo');
           assert.deepEqual(todos[0].attr(), expectedLatest,
             'findAll returned with updated Todo');
@@ -64,7 +63,6 @@
           return Todo.findOne({ id: todos[0].id });
         })
         .then(function (todo) {
-          console.log(todo);
           assert.deepEqual(todo.attr(), expectedLatest, 'findOne returned');
           // ::remove
           return todo.destroy();
