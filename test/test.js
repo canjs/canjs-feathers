@@ -1,12 +1,13 @@
 /* global describe, it, window, require */
 (function () {
   var assert = window.assert;
+  var socket = io('', {transports: ['websocket']});
 
   describe('can.Feathers.Model', function () {
     var Todo;
 
     before(function(done) {
-      can.Feathers.connect().then(function() {
+      can.Feathers.connect(socket).then(function() {
         Todo = can.Feathers.model('/todos/');
         done();
       });
@@ -55,6 +56,7 @@
           return Todo.findAll();
         })
         .then(function (todos) {
+          console.log(todos);
           assert.equal(todos.length, 1, 'Got one todo');
           assert.deepEqual(todos[0].attr(), expectedLatest,
             'findAll returned with updated Todo');
@@ -62,6 +64,7 @@
           return Todo.findOne({ id: todos[0].id });
         })
         .then(function (todo) {
+          console.log(todo);
           assert.deepEqual(todo.attr(), expectedLatest, 'findOne returned');
           // ::remove
           return todo.destroy();
