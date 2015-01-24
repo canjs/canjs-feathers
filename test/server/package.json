@@ -11,7 +11,7 @@
     "url": "https://github.com/feathersjs/canjs-feathers"
   },
   "description": "Tests for CanJS-Feathers",
-  "main": "server/index.js",
+  "main": "server.js",
   "keywords": [
     "CanJS",
     "Feathers",
