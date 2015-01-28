@@ -1,12 +1,13 @@
 /* global describe, it, window, require */
 (function () {
   var assert = window.assert;
+  var socket = io('', {transports: ['websocket']});
 
   describe('can.Feathers.Model', function () {
     var Todo;
 
     before(function(done) {
-      can.Feathers.connect().then(function() {
+      can.Feathers.connect(socket).then(function() {
         Todo = can.Feathers.model('/todos/');
         done();
       });
