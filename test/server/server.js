@@ -38,5 +38,6 @@ var app = feathers()
 // Start the server.
 var port = 8082;
 app.listen(port, function() {
-  console.log('Feathers server listening on port ' + port);
+  console.log('Feathers server started.');
+  console.log('To run tests, open http://localhost:' + port + '/test/');
 });
