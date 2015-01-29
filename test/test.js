@@ -18,7 +18,7 @@
     });
 
     it('connects via SocketIO', function (done) {
-      can.Feathers.connect().then(function (socket) {
+      can.Feathers.connect(socket).then(function (socket) {
         assert.equal(typeof socket.on, 'function', 'Got a socket');
         done();
       });
