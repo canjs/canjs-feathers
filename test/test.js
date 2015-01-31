@@ -149,8 +149,6 @@
           });
         });
       });
-
-
     });
 
     it('passes service errors', function (done) {
