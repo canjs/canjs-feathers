@@ -1,4 +1,5 @@
-/* global describe, it, window, require */
+/* global describe, it, window, io, before, can, $ */
+'use strict';
 (function () {
   var assert = window.assert;
   var socket = io('', {transports: ['websocket']});
@@ -51,7 +52,7 @@
           // ::update
           return todo.save();
         })
-        .then(function (todo) {
+        .then(function () {
           // ::find
           return Todo.findAll();
         })
@@ -119,7 +120,7 @@
               // ::update
               return todo.save();
             })
-            .then(function (todo) {
+            .then(function () {
               // ::find
               return Todo.findAll();
             })
