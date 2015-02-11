@@ -20,7 +20,9 @@
     "test",
     "tests"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "feathers-websocket-client": "~0.0.1"
+  },
   "devDependencies": {
     "canjs": "~2.1.4",
     "jquery": "~2.1.0",

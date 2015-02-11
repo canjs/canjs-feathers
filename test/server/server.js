@@ -1,5 +1,8 @@
+'use strict';
+
 var feathers = require('feathers'),
-  bodyParser = require('body-parser');
+  bodyParser = require('body-parser'),
+  open = require('open');
 
 var TodoService = require('./todos');
 
@@ -33,11 +36,11 @@ var app = feathers()
     req.app.service('todos').clear();
     res.json({ cleared: true });
   })
-  .use('/todos', new TodoService())
+  .use('/todos', new TodoService());
 
 // Start the server.
 var port = 8082;
 app.listen(port, function() {
   console.log('Feathers server started.');
-  console.log('To run tests, open http://localhost:' + port + '/test/');
+  open('http://localhost:' + port + '/test/');
 });

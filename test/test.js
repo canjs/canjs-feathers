@@ -1,4 +1,5 @@
-/* global describe, it, window, require */
+/* global describe, it, window, io, before, can, $ */
+'use strict';
 (function () {
   var assert = window.assert;
   var socket = io('', {transports: ['websocket']});
@@ -18,7 +19,7 @@
     });
 
     it('connects via SocketIO', function (done) {
-      can.Feathers.connect().then(function (socket) {
+      can.Feathers.connect(socket).then(function (socket) {
         assert.equal(typeof socket.on, 'function', 'Got a socket');
         done();
       });
@@ -51,7 +52,7 @@
           // ::update
           return todo.save();
         })
-        .then(function (todo) {
+        .then(function () {
           // ::find
           return Todo.findAll();
         })
@@ -73,6 +74,80 @@
         .then(function (todos) {
           assert.equal(todos.length, 0, 'Deleted todo');
           done();
+        });
+      });
+    });
+
+    it('Todo CRUD after changing sockets', function (done) {
+
+      // Create the Model first.
+      // We're testing swapping out the socket client inside the Model.
+      var Todo = can.Feathers.model('/todos/');
+
+      var params = {
+        query:'token=oh.hai',
+        transports:['websocket'],
+        forceNew: true
+      };
+      var newSocket = io.connect('', params);
+
+      newSocket.on('connect', function(){
+
+        can.Feathers.connect(newSocket).then(function(sock) {
+
+          var laundry = new Todo({ description: 'Do some laundry!' });
+          var expectedLatest = {
+            id: 0,
+            description: 'Really do laundry!',
+            done: false
+          };
+
+          // First we need to clear all our test todos
+          can.ajax({
+            url: '/todos/clear',
+            dataType: 'json'
+          }).then(function () {
+            // ::create
+            laundry.save().then(function (todo) {
+              assert.deepEqual(todo.attr(), {
+                id: 0,
+                description: 'Do some laundry!',
+                done: false
+              });
+
+              todo.attr('description', 'Really do laundry!');
+
+              // ::update
+              return todo.save();
+            })
+            .then(function () {
+              // ::find
+              return Todo.findAll();
+            })
+            .then(function (todos) {
+              assert.equal(todos.length, 1, 'Got one todo');
+              assert.deepEqual(todos[0].attr(), expectedLatest,
+                'findAll returned with updated Todo');
+              // ::get
+              return Todo.findOne({ id: todos[0].id });
+            })
+            .then(function (todo) {
+              assert.deepEqual(todo.attr(), expectedLatest, 'findOne returned');
+              // ::remove
+              return todo.destroy();
+            })
+            .then(function () {
+              return Todo.findAll();
+            })
+            .then(function (todos) {
+              assert.equal(todos.length, 0, 'Deleted todo');
+              assert.equal(sock.id, newSocket.id, 'New socket ids match.');
+              assert.notEqual(socket.id, sock.id, 'Not using old socket.');
+
+              assert.equal(todos.length, 0, 'Deleted todo');
+              done();
+            });
+          });
         });
       });
     });

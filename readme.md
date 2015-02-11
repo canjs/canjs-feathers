@@ -8,7 +8,9 @@ The easiest way to obtain the plugin is through Bower:
 
 > bower install canjs-feathers
 
-Or [download the JavaScript]() and put it in your CanJS project folder.
+Or [download the JavaScript](/feathersjs/feathers-websocket-client/archive/master.zip) and put it in your CanJS project folder.
+
+### Connect to the socket
 
 To use it, you first need to make a connection to your socket server.  Make sure you already have your socket script loaded.  Here are some example connections:
 
@@ -28,13 +30,22 @@ var socket = io('',{
 
 // Example socket connection. Connect to my.app.com using Primus
 var socket = Primus.connect('ws://my.app.com');
-
-
-// Once you have connected, you use that socket connection like this:
-can.Feathers.connect(socket);
-
 ```
 
+### Pass the socket to can.Feathers.connect();
+
+```js
+// Once connected, you use that socket connection like this:
+can.Feathers.connect(socket);
+
+// Connect returns a deferred, so you can also do this:
+can.Feathers.connect(socket).then(function(){
+    // Do stuff here.
+});
+```
+
+
+### Create Models
 To create a model you can use the shorthand `can.Feathers.model`:
 
 ```js
@@ -61,6 +72,33 @@ Todo.findAll().then(function(todos) {
   console.log(todos);
 });
 ```
+
+## Changing Sockets
+As of version 3.0, it is possible to switch sockets after connecting.  This is valuable for apps that need real-time communication both before and after authentication.  Here is an example of switching sockets:
+
+```js
+// Connect without authentication...
+var socket = io('', {transports: ['websocket'] });
+can.Feathers.connect(socket);
+
+Todo.findAll({}) // gets public todos
+
+
+// Then later, with authentication...
+socket = io('', {
+    // An example of reading a token from localStorage.
+    query: 'token=' + localStorage.getItem('featherstoken'),
+    transports: ['websocket'],
+    forceNew:true, // this is required
+});
+can.Feathers.connect(socket);
+
+Todo.findAll({}) // Gets public todos and potentially private todos,
+                 // depending on how your server is set up.
+```
+
+**Please note that `{forceNew:true}` is required when reconnecting.**
+
 
 ## Author
 
