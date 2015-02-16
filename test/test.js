@@ -91,65 +91,68 @@
       };
       var newSocket = io.connect('', params);
 
-      newSocket.on('connect', function(){
+      can.Feathers.connect(newSocket).then(function(sock) {
 
-        can.Feathers.connect(newSocket).then(function(sock) {
+        var Task = can.Feathers.model('/todos/');
 
-          var laundry = new Todo({ description: 'Do some laundry!' });
-          var expectedLatest = {
-            id: 0,
-            description: 'Really do laundry!',
-            done: false
-          };
+        var laundry = new Todo({ description: 'Do some laundry!' });
+        var expectedLatest = {
+          id: 0,
+          description: 'Really do laundry!',
+          done: false
+        };
 
-          // First we need to clear all our test todos
-          can.ajax({
-            url: '/todos/clear',
-            dataType: 'json'
-          }).then(function () {
-            // ::create
-            laundry.save().then(function (todo) {
-              assert.deepEqual(todo.attr(), {
-                id: 0,
-                description: 'Do some laundry!',
-                done: false
-              });
-
-              todo.attr('description', 'Really do laundry!');
-
-              // ::update
-              return todo.save();
-            })
-            .then(function () {
-              // ::find
-              return Todo.findAll();
-            })
-            .then(function (todos) {
-              assert.equal(todos.length, 1, 'Got one todo');
-              assert.deepEqual(todos[0].attr(), expectedLatest,
-                'findAll returned with updated Todo');
-              // ::get
-              return Todo.findOne({ id: todos[0].id });
-            })
-            .then(function (todo) {
-              assert.deepEqual(todo.attr(), expectedLatest, 'findOne returned');
-              // ::remove
-              return todo.destroy();
-            })
-            .then(function () {
-              return Todo.findAll();
-            })
-            .then(function (todos) {
-              assert.equal(todos.length, 0, 'Deleted todo');
-              assert.equal(sock.id, newSocket.id, 'New socket ids match.');
-              assert.notEqual(socket.id, sock.id, 'Not using old socket.');
-
-              assert.equal(todos.length, 0, 'Deleted todo');
-              done();
+        // First we need to clear all our test todos
+        can.ajax({
+          url: '/todos/clear',
+          dataType: 'json'
+        }).then(function () {
+          // ::create
+          laundry.save().then(function (todo) {
+            assert.deepEqual(todo.attr(), {
+              id: 0,
+              description: 'Do some laundry!',
+              done: false
             });
+
+            todo.attr('description', 'Really do laundry!');
+
+            // ::update
+            return todo.save();
+          })
+          .then(function () {
+            // ::find
+            return Todo.findAll();
+          })
+          .then(function (todos) {
+            assert.equal(todos.length, 1, 'Got one todo');
+            assert.deepEqual(todos[0].attr(), expectedLatest,
+              'findAll returned with updated Todo');
+            // ::get
+            return Todo.findOne({ id: todos[0].id });
+          })
+          .then(function (todo) {
+            assert.deepEqual(todo.attr(), expectedLatest, 'findOne returned');
+            // ::remove
+            return todo.destroy();
+          })
+          .then(function () {
+            return Todo.findAll();
+          })
+          .then(function () {
+            return Task.findAll();
+          })
+          .then(function (todos) {
+            assert.equal(todos.length, 0, 'Deleted todo');
+            assert.equal(sock.id, newSocket.id, 'New socket ids match.');
+            assert.notEqual(socket.id, sock.id, 'Not using old socket.');
+
+            assert.equal(todos.length, 0, 'Deleted todo');
+            done();
           });
         });
       });
+
     });
 
     it('passes service errors', function (done) {
