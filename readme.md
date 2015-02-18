@@ -74,7 +74,7 @@ Todo.findAll().then(function(todos) {
 ```
 
 ## Changing Sockets
-As of version 3.0, it is possible to switch sockets after connecting.  This is valuable for apps that need real-time communication both before and after authentication.  Here is an example of switching sockets:
+As of version 2.1, it is possible to switch sockets after connecting.  This is valuable for apps that need real-time communication both before and after authentication.  Here is an example of switching sockets:
 
 ```js
 // Connect without authentication...
