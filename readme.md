@@ -100,12 +100,13 @@ Todo.findAll({}) // Gets public todos and potentially private todos,
 **Please note that `{forceNew:true}` is required when reconnecting.**
 
 
-## Author
+## Authors
 
 - [David Luecke](https://github.com/daffl)
+- [Marshall Thompson](https://github.com/marshallswain)
 
 ## License
 
-Copyright (c) 2014 David Luecke
+Copyright (c) 2015 David Luecke
 
 Licensed under the [MIT license](LICENSE).
