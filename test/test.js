@@ -1,32 +1,20 @@
-/* global describe, it, window, io, before, can, $ */
+/* global describe, it, io, before, can, $, assert, canFeathers, feathers, can */
 'use strict';
 (function () {
-  var assert = window.assert;
-  var socket = io('', {transports: ['websocket']});
+  var socket = io('http://localhost:8082', {transports: ['websocket']});
+  var app = feathers().configure(feathers.socketio(socket));
 
   describe('can.Feathers.Model', function () {
-    var Todo;
+    var Todo, Model;
 
-    before(function(done) {
-      can.Feathers.connect(socket).then(function() {
-        Todo = can.Feathers.model('/todos/');
-        done();
-      });
-    });
-
-    it('initializes can.Feathers', function () {
-      assert.ok(can.Feathers, 'can.Feathers exists');
-    });
-
-    it('connects via SocketIO', function (done) {
-      can.Feathers.connect(socket).then(function (socket) {
-        assert.equal(typeof socket.on, 'function', 'Got a socket');
-        done();
-      });
+    before(function() {
+      Model = canFeathers(app);
+      Todo = Model.extend({
+        resource: 'todos'
+      }, {});
     });
 
     it('Todo CRUD', function (done) {
-      var Todo = can.Feathers.model('/todos/');
       var laundry = new Todo({ description: 'Do some laundry!' });
       var expectedLatest = {
         id: 0,
@@ -36,7 +24,7 @@
 
       // First we need to clear all our test todos
       can.ajax({
-        url: '/todos/clear',
+        url: 'http://localhost:8082/todos/clear',
         dataType: 'json'
       }).then(function () {
         // ::create
@@ -78,83 +66,7 @@
       });
     });
 
-    it('Todo CRUD after changing sockets', function (done) {
-
-      // Create the Model first.
-      // We're testing swapping out the socket client inside the Model.
-      var Todo = can.Feathers.model('/todos/');
-
-      var params = {
-        query:'token=oh.hai',
-        transports:['websocket'],
-        forceNew: true
-      };
-      var newSocket = io.connect('', params);
-
-      newSocket.on('connect', function(){
-
-        can.Feathers.connect(newSocket).then(function(sock) {
-
-          var laundry = new Todo({ description: 'Do some laundry!' });
-          var expectedLatest = {
-            id: 0,
-            description: 'Really do laundry!',
-            done: false
-          };
-
-          // First we need to clear all our test todos
-          can.ajax({
-            url: '/todos/clear',
-            dataType: 'json'
-          }).then(function () {
-            // ::create
-            laundry.save().then(function (todo) {
-              assert.deepEqual(todo.attr(), {
-                id: 0,
-                description: 'Do some laundry!',
-                done: false
-              });
-
-              todo.attr('description', 'Really do laundry!');
-
-              // ::update
-              return todo.save();
-            })
-            .then(function () {
-              // ::find
-              return Todo.findAll();
-            })
-            .then(function (todos) {
-              assert.equal(todos.length, 1, 'Got one todo');
-              assert.deepEqual(todos[0].attr(), expectedLatest,
-                'findAll returned with updated Todo');
-              // ::get
-              return Todo.findOne({ id: todos[0].id });
-            })
-            .then(function (todo) {
-              assert.deepEqual(todo.attr(), expectedLatest, 'findOne returned');
-              // ::remove
-              return todo.destroy();
-            })
-            .then(function () {
-              return Todo.findAll();
-            })
-            .then(function (todos) {
-              assert.equal(todos.length, 0, 'Deleted todo');
-              assert.equal(sock.id, newSocket.id, 'New socket ids match.');
-              assert.notEqual(socket.id, sock.id, 'Not using old socket.');
-
-              assert.equal(todos.length, 0, 'Deleted todo');
-              done();
-            });
-          });
-        });
-      });
-    });
-
     it('passes service errors', function (done) {
-      var Todo = can.Feathers.model('todos');
-
       Todo.findOne({ id: 23 }).fail(function (error) {
         assert.equal(error.message, 'Todo not found');
         done();
@@ -169,14 +81,13 @@
       });
 
       can.ajax({
-        url: '/todos',
+        url: 'http://localhost:8082/todos',
         data: { description: 'Some test' },
         method: 'POST'
       });
     });
 
     it('updating model via REST updates DOM', function (done) {
-      var Todo = can.Feathers.model('/todos/');
       var ta = $('#testarea');
 
       Todo.bind('updated', function () {
@@ -196,7 +107,7 @@
         ta.append(renderer(todo));
 
         can.ajax({
-          url: '/todos/' + todo.id,
+          url: 'http://localhost:8082/todos/' + todo.id,
           data: { description: 'Live-bound', done: true },
           method: 'PUT'
         });
@@ -204,7 +115,6 @@
     });
 
     it('removing a model via REST removes entry from DOM', function(done) {
-      var Todo = can.Feathers.model('/todos/');
       var ta = $('#testarea');
 
       Todo.bind('destroyed', function () {
@@ -224,7 +134,7 @@
         assert.equal(ta.find('p.todo').length, 1, 'One todo rendered in list');
 
         can.ajax({
-          url: '/todos/' + todo.id,
+          url: 'http://localhost:8082/todos/' + todo.id,
           method: 'DELETE'
         });
       });

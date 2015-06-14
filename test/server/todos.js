@@ -21,17 +21,17 @@ TodoStore.prototype.getById = function (id) {
   var currentTodo;
   for (var i = 0; i < this.todos.length; i++) {
     currentTodo = this.todos[i];
-    if (currentTodo.id == id) {
+    if (currentTodo.id === parseInt(id, 10)) {
       return currentTodo;
     }
   }
 
   return null;
-}
+};
 
 TodoStore.prototype.find = function (params, callback) {
   callback(null, this.todos);
-}
+};
 
 TodoStore.prototype.get = function (id, params, callback) {
   var todo = this.getById(id);
@@ -40,7 +40,7 @@ TodoStore.prototype.get = function (id, params, callback) {
   }
 
   callback(null, todo);
-}
+};
 
 TodoStore.prototype.create = function (data, params, callback) {
   // Create our actual Todo object so that we only get what we really want
@@ -53,7 +53,7 @@ TodoStore.prototype.create = function (data, params, callback) {
   this.todos.push(newTodo);
 
   callback(null, newTodo);
-}
+};
 
 TodoStore.prototype.update = function (id, data, params, callback) {
   var todo = this.getById(id);
@@ -67,7 +67,7 @@ TodoStore.prototype.update = function (id, data, params, callback) {
   todo.description = data.description;
 
   callback(null, todo);
-}
+};
 
 TodoStore.prototype.remove = function (id, params, callback) {
   var todo = this.getById(id);
@@ -79,11 +79,11 @@ TodoStore.prototype.remove = function (id, params, callback) {
   this.todos.splice(this.todos.indexOf(todo), 1);
 
   callback(null, todo);
-}
+};
 
 TodoStore.prototype.clear = function() {
   this.todos = [];
   this.lastId = 0;
-}
+};
 
 module.exports = TodoStore;
