@@ -1,6 +1,6 @@
 {
   "name": "canjs-feathers",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "homepage": "https://github.com/feathersjs/canjs-feathers",
   "authors": [
     "David Luecke <daff@neyeon.com>"
@@ -20,13 +20,10 @@
     "test",
     "tests"
   ],
-  "dependencies": {
-    "feathers-websocket-client": "~0.0.1"
-  },
   "devDependencies": {
-    "canjs": "~2.1.4",
-    "jquery": "~2.1.0",
-    "mocha": "~1.18.2",
-    "assert": "~0.0.2"
+    "canjs": "^2.1.4",
+    "jquery": "^2.1.0",
+    "mocha": "^1.18.2",
+    "assert": "^0.0.2"
   }
 }

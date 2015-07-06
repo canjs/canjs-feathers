@@ -1,11 +1,9 @@
 'use strict';
 
-var feathers = require('feathers'),
-  bodyParser = require('body-parser'),
-  open = require('open');
-
+var path = require('path');
+var feathers = require('feathers');
+var bodyParser = require('body-parser');
 var TodoService = require('./todos');
-
 
 // We need to do this to get proper errors
 // see http://stackoverflow.com/questions/18391212/is-it-not-possible-to-stringify-an-error-using-json-stringify
@@ -25,7 +23,13 @@ Object.defineProperty(Error.prototype, 'toJSON', {
 
 // Prep the Feathers server.
 var app = feathers()
-  .use(feathers.static(__dirname + '/../../'))
+  .use(feathers.static(path.join(__dirname, '..', '..')))
+  .use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Methods', 'PUT, DELETE, GET, POST');
+    next();
+  })
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({extended: true}))
 
@@ -42,5 +46,4 @@ var app = feathers()
 var port = 8082;
 app.listen(port, function() {
   console.log('Feathers server started.');
-  open('http://localhost:' + port + '/test/');
 });

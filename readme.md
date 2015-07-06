@@ -1,104 +1,64 @@
-# CanJS Feathers [![Build Status](https://travis-ci.org/feathersjs/canjs-feathers.png?branch=master)](https://travis-ci.org/feathersjs/canjs-feathers)
+# CanJS Feathers
 
-> CanJS model implementation that connects to Feathers services through a real-time socket.
+[![Build Status](https://travis-ci.org/feathersjs/canjs-feathers.png?branch=master)](https://travis-ci.org/feathersjs/canjs-feathers)
+
+CanJS model implementation that connects to Feathers services through [feathers-client](https://github.com/feathersjs/feathers-client).
 
 ## Getting Started
 
-The easiest way to obtain the plugin is through Bower:
+Use NPM
 
-> bower install canjs-feathers
+    npm install canjs-feathers
 
-Or [download the JavaScript](/feathersjs/feathers-websocket-client/archive/master.zip) and put it in your CanJS project folder.
+Or Bower to install the package
 
-### Connect to the socket
+    bower install canjs-feathers
 
-To use it, you first need to make a connection to your socket server.  Make sure you already have your socket script loaded.  Here are some example connections:
+Or [download the JavaScript](https://github.com/feathersjs/canjs-feathers/archive/master.zip) and put it in your CanJS project folder. Use it with any module loader (AMD or CommonJS) or without via the global `canFeathers` method.
+
+### Set up a connection
+
+CanJS models can be created by passing a Feathers client. You can use any connector supported by feathers-client (jQuery, Request, Superagent, Socket.io or Primus). First, either load or include the feathers-client and canjs-feathers JavaScript:
+
+```html
+<script type="text/javascript" src="node_modules/feathers-client/dist/feathers.js"></script>
+<script type="text/javascript" src="node_modules/canjs-feathers/dist/canjs-feathers.js"></script>
+```
 
 ```js
+var feathers = require('feathers-client');
+var canFeathers = require('canjs-feathers');
+```
 
-// Example socket connection. Connect to the current host via SocketIO
+Let's use Socket.io for the example:
+
+```js
+// Connect to the Socket
 var socket = io();
+// Create feathers-client application connecting to the socket
+var app = feathers().configure(feathers.socketio(socket));
 
-// Example socket connection. Connect to todos.feathersjs.com
-var socket = io('http://todos.feathersjs.com');
-
-// Example socket connection. Connect to current host with custom token auth and transports.
-var socket = io('',{
-  query: 'token=<custom-token-here>',
-  transports:['websocket']
-});
-
-// Example socket connection. Connect to my.app.com using Primus
-var socket = Primus.connect('ws://my.app.com');
-```
-
-### Pass the socket to can.Feathers.connect();
-
-```js
-// Once connected, you use that socket connection like this:
-can.Feathers.connect(socket);
-
-// Connect returns a deferred, so you can also do this:
-can.Feathers.connect(socket).then(function(){
-    // Do stuff here.
-});
-```
-
-
-### Create Models
-To create a model you can use the shorthand `can.Feathers.model`:
-
-```js
-// connects to the todos service
-var Todo = can.Feathers.model('/todos');
-```
-
-Or extend `can.Feathers.Model` and set the `resource` static property:
-
-```js
-var Todo = can.Feathers.Model.extend({
+// Pass the app to get a base model
+var Model = canFeathers(app);
+// Then extend it with `resource` set to the service name.
+var Todo = Model.extend({
   resource: 'todos'
 }, {});
 ```
 
-Now you can use it like any other [CanJS](http://canjs.com/docs/can.Model.html) model:
+Then we can use it like any other CanJS model:
 
 ```js
-var todo = new Todo({ description: 'You have to do dishes' });
+var myTodo = new Todo({
+  text: 'A Todo',
+  complete: false
+});
 
-todo.save();
-
-Todo.findAll().then(function(todos) {
-  console.log(todos);
+myTodo.save().then(function() {
+  myTodo.attr('text', 'Update Todo');
+  myTodo.save();
 });
 ```
-
-## Changing Sockets
-As of version 2.1, it is possible to switch sockets after connecting.  This is valuable for apps that need real-time communication both before and after authentication.  Here is an example of switching sockets:
-
-```js
-// Connect without authentication...
-var socket = io('', {transports: ['websocket'] });
-can.Feathers.connect(socket);
-
-Todo.findAll({}) // gets public todos
-
-
-// Then later, with authentication...
-socket = io('', {
-    // An example of reading a token from localStorage.
-    query: 'token=' + localStorage.getItem('featherstoken'),
-    transports: ['websocket'],
-    forceNew:true, // this is required
-});
-can.Feathers.connect(socket);
-
-Todo.findAll({}) // Gets public todos and potentially private todos,
-                 // depending on how your server is set up.
-```
-
-**Please note that `{forceNew:true}` is required when reconnecting.**
-
 
 ## Authors
 
