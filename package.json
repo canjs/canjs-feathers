@@ -1,7 +1,7 @@
 {
   "name": "canjs-feathers",
   "description": "CanJS model implementation using canjs-feathers",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/feathersjs/canjs-feathers.git"
