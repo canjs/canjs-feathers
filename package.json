@@ -17,8 +17,8 @@
     "version": "git commit -am \"Update dist for release\" && git checkout -b release && git add -f dist/",
     "postversion": "git push --tags && git checkout master && git branch -D release && git push",
     "testee": "testee test/test.html --browsers firefox",
-    "test": "npm run jshint && npm run testee",
-    "jshint": "jshint ./*.js ./src/ --config",
+    "test": "npm run jshint && npm run jshint && npm run testee",
+    "jshint": "jshint --config src/.",
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
@@ -62,15 +62,15 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "documentjs": "^0.4.2",
-    "jshint": "^2.9.1",
     "cssify": "^0.6.0",
+    "documentjs": "^0.4.2",
+    "done-serve": "^0.3.0-pre.0",
+    "donejs-cli": "^0.10.0-pre.0",
+    "generator-donejs": "^0.10.0-pre.0",
+    "jshint": "^2.9.2",
     "steal": "^0.16.0",
     "steal-qunit": "^0.1.1",
     "steal-tools": "^0.16.0",
-    "testee": "^0.2.4",
-    "generator-donejs": "^0.10.0-pre.0",
-    "donejs-cli": "^0.10.0-pre.0",
-    "done-serve": "^0.3.0-pre.0"
+    "testee": "^0.2.4"
   }
 }
