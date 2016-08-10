@@ -1,112 +1,74 @@
-# CanJS Feathers [![Build Status](https://travis-ci.org/feathersjs/canjs-feathers.png?branch=master)](https://travis-ci.org/feathersjs/canjs-feathers)
+# canjs-feathers
 
-> CanJS model implementation that connects to Feathers services through a real-time socket.
+[![Build Status](https://travis-ci.org/feathersjs/canjs-feathers.png?branch=master)](https://travis-ci.org/feathersjs/canjs-feathers)
 
-## Getting Started
+A set of utils for using CanJS with Feathers on the client.
 
-The easiest way to obtain the plugin is through Bower:
+## Usage
 
-> bower install canjs-feathers
+### ES6 use
 
-Or [download the JavaScript](/feathersjs/feathers-websocket-client/archive/master.zip) and put it in your CanJS project folder.
-
-### Connect to the socket
-
-To use it, you first need to make a connection to your socket server.  Make sure you already have your socket script loaded.  Here are some example connections:
+With StealJS, you can import this module directly in a template that is autorendered:
 
 ```js
-
-// Example socket connection. Connect to the current host via SocketIO
-var socket = io();
-
-// Example socket connection. Connect to todos.feathersjs.com
-var socket = io('http://todos.feathersjs.com');
-
-// Example socket connection. Connect to current host with custom token auth and transports.
-var socket = io('',{
-  query: 'token=<custom-token-here>',
-  transports:['websocket']
-});
-
-// Example socket connection. Connect to my.app.com using Primus
-var socket = Primus.connect('ws://my.app.com');
+import plugin from 'canjs-feathers';
 ```
 
-### Pass the socket to can.Feathers.connect();
+### CommonJS use
+
+Use `require` to load `canjs-feathers` and everything else
+needed to create a template that uses `canjs-feathers`:
 
 ```js
-// Once connected, you use that socket connection like this:
-can.Feathers.connect(socket);
-
-// Connect returns a deferred, so you can also do this:
-can.Feathers.connect(socket).then(function(){
-    // Do stuff here.
-});
+var plugin = require("canjs-feathers");
 ```
 
+## AMD use
 
-### Create Models
-To create a model you can use the shorthand `can.Feathers.model`:
+Configure the `can` and `jquery` paths and the `canjs-feathers` package:
 
-```js
-// connects to the todos service
-var Todo = can.Feathers.model('/todos');
+```html
+<script src="require.js"></script>
+<script>
+	require.config({
+	    paths: {
+	        "jquery": "node_modules/jquery/dist/jquery",
+	        "can": "node_modules/canjs/dist/amd/can"
+	    },
+	    packages: [{
+		    	name: 'canjs-feathers',
+		    	location: 'node_modules/canjs-feathers/dist/amd',
+		    	main: 'lib/canjs-feathers'
+	    }]
+	});
+	require(["main-amd"], function(){});
+</script>
 ```
 
-Or extend `can.Feathers.Model` and set the `resource` static property:
+### Standalone use
 
-```js
-var Todo = can.Feathers.Model.extend({
-  resource: 'todos'
-}, {});
+Load the `global` version of the plugin:
+
+```html
+<script src='./node_modules/canjs-feathers/dist/global/canjs-feathers.js'></script>
 ```
 
-Now you can use it like any other [CanJS](http://canjs.com/docs/can.Model.html) model:
+## Contributing
 
-```js
-var todo = new Todo({ description: 'You have to do dishes' });
+### Making a Build
 
-todo.save();
+To make a build of the distributables into `dist/` in the cloned repository run
 
-Todo.findAll().then(function(todos) {
-  console.log(todos);
-});
+```
+npm install
+node build
 ```
 
-## Changing Sockets
-As of version 2.1, it is possible to switch sockets after connecting.  This is valuable for apps that need real-time communication both before and after authentication.  Here is an example of switching sockets:
+### Running the tests
 
-```js
-// Connect without authentication...
-var socket = io('', {transports: ['websocket'] });
-can.Feathers.connect(socket);
+Tests can run in the browser by opening a webserver and visiting the `test.html` page.
+Automated tests that run the tests from the command line in Firefox can be run with
 
-Todo.findAll({}) // gets public todos
-
-
-// Then later, with authentication...
-socket = io('', {
-    // An example of reading a token from localStorage.
-    query: 'token=' + localStorage.getItem('featherstoken'),
-    transports: ['websocket'],
-    forceNew:true, // this is required
-});
-can.Feathers.connect(socket);
-
-Todo.findAll({}) // Gets public todos and potentially private todos,
-                 // depending on how your server is set up.
 ```
-
-**Please note that `{forceNew:true}` is required when reconnecting.**
-
-
-## Authors
-
-- [David Luecke](https://github.com/daffl)
-- [Marshall Thompson](https://github.com/marshallswain)
-
-## License
-
-Copyright (c) 2015 David Luecke
-
-Licensed under the [MIT license](LICENSE).
+npm test
+```
