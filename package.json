@@ -55,19 +55,39 @@
       "donejs-cli",
       "steal-tools"
     ],
+    "map": {
+      "engine.io-client/lib/lib": "engine.io-client/lib/index",
+      "engine.io-client/transports/transports": "engine.io-client/transports/index",
+      "socket.io-parser/component-emitter": "component-emitter"
+    },
     "directories": {
       "lib": "src"
     },
     "npmAlgorithm": "flat"
   },
-  "dependencies": {},
+  "dependencies": {
+    "can-define": "^0.7.15",
+    "can-event": "^3.0.0-pre.6",
+    "can-fixture": "^0.4.0-pre.9",
+    "engine.io-client": "^1.6.11",
+    "socket.io-parser": "^2.2.6"
+  },
   "devDependencies": {
     "cssify": "^0.6.0",
     "documentjs": "^0.4.2",
     "done-serve": "^0.3.0-pre.0",
     "donejs-cli": "^0.10.0-pre.0",
+    "feathers": "^2.0.1",
+    "feathers-authentication": "^0.7.9",
+    "feathers-hooks": "^1.5.4",
+    "feathers-reactive": "^0.3.0",
+    "feathers-rest": "^1.4.3",
+    "feathers-socketio": "^1.4.1",
     "generator-donejs": "^0.10.0-pre.0",
+    "jquery": "^3.1.0",
     "jshint": "^2.9.2",
+    "jwt-decode": "^2.1.0",
+    "rxjs": "^5.0.0-beta.11",
     "steal": "^0.16.0",
     "steal-qunit": "^0.1.1",
     "steal-tools": "^0.16.0",
