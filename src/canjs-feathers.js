@@ -67,8 +67,12 @@ export default function ObservableService(options = {}){
       return ;
     },
 
-    patch(){
-      return false;
+    patch(props){
+      let id = this[Map.idProp];
+      return service.patch(id, props).then(response => {
+        Map.dispatch('patched', [response]);
+        return response;
+      });
     },
 
     destroy(){

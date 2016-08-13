@@ -101,6 +101,18 @@ QUnit.test('map.save()', function(assert){
   });
 });
 
+QUnit.test('map.patch(props)', function(assert){
+  const done = assert.async();
+
+  var account = new Account(accountFixtureData[0]);
+
+  account.patch({name: 'Patchy McPatchface'}).then(account => {
+    assert.equal(account._id, 1);
+    assert.equal(account.name, 'Patchy McPatchface', 'map.patch() worked');
+    done();
+  });
+});
+
 QUnit.test('map.destroy()', function(assert){
   const done = assert.async();
 
