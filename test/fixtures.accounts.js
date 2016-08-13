@@ -24,6 +24,10 @@ fixture({url: "/v1/accounts/{id}", method: "get"}, function(request, response){
   response(accountFixtureData[0]);
 });
 
+fixture({url: "/v1/accounts/{id}", method: "put"}, function(request, response){
+  response(request.data);
+});
+
 fixture({url: "/v1/accounts/{id}", method: "patch"}, function(request, response){
   var id = request.data.id;
   var temp = Object.assign({}, request.data);
