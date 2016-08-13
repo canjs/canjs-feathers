@@ -4,6 +4,7 @@ import DefineList from 'can-define/list/';
 import feathers from '../test/feathers-rest';
 import CanService from './canjs-feathers';
 import fixtureData from '../test/fixtures';
+import stache from 'can-stache';
 
 const Account = DefineMap.extend('Account', {
   seal: false
@@ -253,3 +254,25 @@ QUnit.test('lists pull instances from the model store', function(assert){
     });
   });
 });
+
+// QUnit.test('updating stache template from two lists', function(assert){
+//   const done = assert.async();
+//   const Acct = DefineMap.extend({
+//     name: 'string'
+//   });
+//   Acct.List = DefineList.extend({
+//     '*': Acct
+//   });
+//   var account = new Acct(fixtureData[1]);
+//   // var accountList2 = new Acct.List(fixtureData);
+//   // Account.find().then(accountList1 => {
+//     // Account.find().then(accountList2 => {
+//       var template = stache('{{name}}')(account);
+//       assert.equal(template.textContent, 'Savings');
+//       account.name = 'GoodSavings';
+//       assert.equal(account.name, 'GoodSavings');
+//       assert.equal(template.textContent, 'GoodSavings');
+//       done();
+//     // });
+//   // });
+// });

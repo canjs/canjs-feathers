@@ -66,14 +66,16 @@
     "npmAlgorithm": "flat"
   },
   "dependencies": {
-    "can-define": "^0.7.15",
+    "can-define": "github:canjs/can-define",
     "can-event": "^3.0.0-pre.6",
     "can-util": "^3.0.0-pre.33",
     "engine.io-client": "^1.6.11",
-    "socket.io-parser": "^2.2.6"
+    "feathers-hooks": "^1.5.5",
+    "socket.io-parser": "^2.2.6",
+    "steal": "^0.16.35"
   },
   "devDependencies": {
-    "can-fixture": "^0.4.0-pre.9",
+    "can-fixture": "^0.4.0-pre.10",
     "can-stache": "^3.0.0-pre.15",
     "cssify": "^0.6.0",
     "documentjs": "^0.4.2",
