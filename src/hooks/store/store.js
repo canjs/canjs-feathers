@@ -1,10 +1,24 @@
 'use strict';
 
+export default {
+  update(options){
+    const defaults = {};
+    options = Object.assign({}, defaults, options);
+    return function(hook){
+      if (hook.result) {
+        if (Array.isArray(hook.result)) {
+
+        }
+      }
+    };
+  }
+};
+
+
 /**
  * Converts the results of a query into a List for arrays or a Map for objects.
  * You can pass `$raw:true` in the query params to skip this and get the raw data.
  */
-const defaults = {};
 
 module.exports = function(options){
   options = Object.assign({}, defaults, options);

@@ -1,4 +1,7 @@
 {
+  "globals": {
+    "steal":true
+  },
   "node": true,
   "esnext": true,
   "bitwise": true,

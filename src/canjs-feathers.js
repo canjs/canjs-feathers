@@ -1,7 +1,7 @@
-import DefineMap from 'can-define/map/';
 import DefineList from 'can-define/list/';
 import canEvent from 'can-event';
 import hydrate from './hooks/hydrate/';
+import deepAssign from 'can-util/js/deep-assign/deep-assign';
 
 export default function ObservableService(options = {}){
   if (!options.Map) {
@@ -9,6 +9,11 @@ export default function ObservableService(options = {}){
   }
   if (!options.service) {
     throw new Error('Please provide a feathers service.');
+  }
+
+  let name = options.name || options.Map.constructor.prototype.name;
+  if (name === 'Map') {
+    steal.dev.log('Debugging will be easier if you give your Map a name.');
   }
 
   const service = options.service;
@@ -21,13 +26,38 @@ export default function ObservableService(options = {}){
   const Map = options.Map;
   const defaults = {
     idProp: '_id',
-    name: undefined,
+    name: name,
     List: DefineList.extend({
       '*': Map
-    })
+    }),
+    store: {}
   };
   Object.assign(service, defaults, options);
 
+
+  // store a reference to the original newInstance function
+  var _newInstance = Map.newInstance;
+
+  // override the Map's newInstance function
+  Map.newInstance = function(props) {
+    let id = props[service.idProp];
+    if (id) {
+      // look in the service.store to see if the object already exists
+      var cachedInst = service.store[id];
+      if(cachedInst) {
+        steal.dev.log(`Updating ${service.name}`);
+        cachedInst = deepAssign(cachedInst, props);
+        return cachedInst;
+      }
+    }
+
+    //otherwise call the original newInstance function and return a new instance of Person.
+    var newInst = _newInstance.apply(this, arguments);
+    if (id) {
+      service.store[id] = newInst;
+    }
+    return newInst;
+  };
 
   // Extend the Map
   Object.assign(Map, {
@@ -41,6 +71,7 @@ export default function ObservableService(options = {}){
       return service.get(id, params);
     }
   }, canEvent);
+
 
   // Extend the Map instances.
   Object.assign(Map.constructor.prototype, {

@@ -68,11 +68,13 @@
   "dependencies": {
     "can-define": "^0.7.15",
     "can-event": "^3.0.0-pre.6",
-    "can-fixture": "^0.4.0-pre.9",
+    "can-util": "^3.0.0-pre.33",
     "engine.io-client": "^1.6.11",
     "socket.io-parser": "^2.2.6"
   },
   "devDependencies": {
+    "can-fixture": "^0.4.0-pre.9",
+    "can-stache": "^3.0.0-pre.15",
     "cssify": "^0.6.0",
     "documentjs": "^0.4.2",
     "done-serve": "^0.3.0-pre.0",

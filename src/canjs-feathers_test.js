@@ -40,6 +40,7 @@ QUnit.test('Extends the original service, Map, and List', function(assert){
   assert.equal(typeof service.find, 'function', 'Returns the service.');
   assert.equal(typeof service.Map, 'function', 'Adds the Map to the service.');
   assert.equal(typeof service.List, 'function', 'Adds the List to the service.');
+  assert.equal(service.name, 'Account', 'Adds the Map name to the service.');
   assert.equal(service.idProp, '_id', 'Adds the idProp to the service.');
 
   assert.equal(typeof Account.find, 'function', 'Adds the find function to the Map.');
@@ -239,5 +240,16 @@ QUnit.test('custom id as getter function', function(assert){
   bob.save().then(response => {
     assert.equal(response.idInReponse, 'BobMinion', 'Custom id works.');
     done();
+  });
+});
+
+QUnit.test('lists pull instances from the model store', function(assert){
+  const done = assert.async();
+
+  Account.find().then(accountList1 => {
+    Account.find().then(accountList2 => {
+      assert.equal(accountList1[0] === accountList2[0], true, 'Same instance in both lists.');
+      done();
+    });
   });
 });

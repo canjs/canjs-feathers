@@ -1,6 +1,6 @@
 import fixture from 'can-fixture';
 
-var accountFixtureData = [{
+var fixtureData = [{
   _id: 1,
   name: 'Checking',
   balance: 1000.55
@@ -14,14 +14,18 @@ var accountFixtureData = [{
   balance: 95000.01
 }];
 
-export default accountFixtureData;
+export default fixtureData;
 
 fixture({url: "/v1/accounts", method: "get"}, function(request, response){
-  response(accountFixtureData);
+  let newData = fixtureData.map(account => {
+    let newObj = Object.assign({}, account);
+    return newObj;
+  });
+  response(newData);
 });
 
 fixture({url: "/v1/accounts/{id}", method: "get"}, function(request, response){
-  response(accountFixtureData[0]);
+  response(fixtureData[0]);
 });
 
 fixture({url: "/v1/accounts/{id}", method: "put"}, function(request, response){
@@ -32,7 +36,7 @@ fixture({url: "/v1/accounts/{id}", method: "patch"}, function(request, response)
   var id = request.data.id;
   var temp = Object.assign({}, request.data);
   delete temp.id;
-  response(Object.assign(accountFixtureData[id - 1], request.data));
+  response(Object.assign(fixtureData[id - 1], temp));
 });
 
 fixture({url: "/v1/accounts", method: "post"}, function(request, response){
@@ -41,7 +45,7 @@ fixture({url: "/v1/accounts", method: "post"}, function(request, response){
 });
 
 fixture({url: "/v1/accounts/{id}", method: "delete"}, function(request, response){
-  response(accountFixtureData[0]);
+  response(fixtureData[0]);
 });
 
 fixture({url: "/people/BobMinion", method: "put"}, function(request, response){
