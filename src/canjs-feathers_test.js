@@ -165,6 +165,28 @@ QUnit.test('Map:updated event', function(assert){
   account.save();
 });
 
+QUnit.test('Map:patched event', function(assert){
+  const done = assert.async();
+
+  function handler(ev, data){
+    assert.equal(data._id, 2, 'Got the instance in the `patched` event.');
+    assert.equal(data.name, 'Jonas', 'Got the new name in the `patched` event.');
+    Account.off('patched', handler);
+    assert.ok(Account.off, 'Removed subscription to `patched` event.');
+    done();
+  }
+
+  Account.on('patched', handler);
+  assert.ok(Account.on, 'Subscribed to `patched` event.');
+
+  var account = new Account({
+    _id: 2,
+    name: 'Checking',
+    balance: 1402.42
+  });
+  account.patch({name: 'Jonas'});
+});
+
 QUnit.test('Map:destroyed event', function(assert){
   const done = assert.async();
 
