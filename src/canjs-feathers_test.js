@@ -2,8 +2,8 @@ import QUnit from 'steal-qunit';
 import DefineMap from 'can-define/map/';
 import DefineList from 'can-define/list/';
 import feathers from '../test/feathers-rest';
-import DoneService from './canjs-feathers';
-import accountFixtureData from '../test/fixtures.accounts';
+import CanService from './canjs-feathers';
+import fixtureData from '../test/fixtures';
 
 const Account = DefineMap.extend('Account', {
   seal: false
@@ -24,7 +24,7 @@ Account.List = DefineList.extend({
   total: 'number'
 });
 
-const service = new DoneService({
+const service = new CanService({
   service: feathers.service('v1/accounts'),
   idProp: '_id',
   Map: Account,
@@ -88,7 +88,7 @@ QUnit.test('Map.get', function(assert){
 QUnit.test('map.save()', function(assert){
   const done = assert.async();
 
-  var account = new Account(accountFixtureData[0]);
+  var account = new Account(fixtureData[0]);
   delete account._id;
 
   account.save().then(account => {
@@ -104,7 +104,7 @@ QUnit.test('map.save()', function(assert){
 QUnit.test('map.patch(props)', function(assert){
   const done = assert.async();
 
-  var account = new Account(accountFixtureData[0]);
+  var account = new Account(fixtureData[0]);
 
   account.patch({name: 'Patchy McPatchface'}).then(account => {
     assert.equal(account._id, 1);
@@ -116,7 +116,7 @@ QUnit.test('map.patch(props)', function(assert){
 QUnit.test('map.destroy()', function(assert){
   const done = assert.async();
 
-  var account = new Account(accountFixtureData[0]);
+  var account = new Account(fixtureData[0]);
 
   account.destroy().then(account => {
     assert.equal(account._id, 1, 'map.destroy() worked');
@@ -206,4 +206,38 @@ QUnit.test('Map:destroyed event', function(assert){
     balance: 1402.42
   });
   account.destroy();
+});
+
+QUnit.test('custom id as getter function', function(assert){
+  const done = assert.async();
+
+  const Person = DefineMap.extend('Person', {
+    seal: false
+  }, {
+    id: {
+      type: 'string',
+      get(){
+        return `${this.first}${this.last}`;
+      }
+    },
+    first: {type: 'string'},
+    last: {type: 'string'},
+    idInReponse: 'string'
+  });
+
+  new CanService({
+    service: feathers.service('people'),
+    idProp: 'id',
+    Map: Person,
+    name: 'Account',
+  });
+
+  var bob = new Person({
+    first: 'Bob',
+    last: 'Minion'
+  });
+  bob.save().then(response => {
+    assert.equal(response.idInReponse, 'BobMinion', 'Custom id works.');
+    done();
+  });
 });

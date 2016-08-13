@@ -43,3 +43,8 @@ fixture({url: "/v1/accounts", method: "post"}, function(request, response){
 fixture({url: "/v1/accounts/{id}", method: "delete"}, function(request, response){
   response(accountFixtureData[0]);
 });
+
+fixture({url: "/people/BobMinion", method: "put"}, function(request, response){
+  request.data.idInReponse = request.url.replace('/people/', '');
+  response(request.data);
+});
