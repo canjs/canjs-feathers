@@ -8,7 +8,7 @@ export default function ObservableService(options = {}){
     throw new Error('Please provide a Map Constructor.');
   }
   if (!options.service) {
-    throw new Error('You must pass a feathers service.');
+    throw new Error('Please provide a feathers service.');
   }
 
   const service = options.service;
@@ -94,7 +94,7 @@ export default function ObservableService(options = {}){
   });
 
   // Extend the List instances
-  Object.assign(options.List.constructor.prototype, {
+  Object.assign(service.List.constructor.prototype, {
     save(){
       return true;
     },
