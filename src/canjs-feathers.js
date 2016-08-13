@@ -67,7 +67,13 @@ export default function ObservableService(options = {}){
       return ;
     },
 
-    patch(props){
+    /**
+     * `patch()` currently requires passing in a props object.  In the future,
+     * we should update it to watch for props that change and mark them as dirty,
+     * then it can only send the dirty props.  For now, passing the props will
+     * send those props as the patch request.
+     */
+    patch(props = {}){
       let id = this[Map.idProp];
       return service.patch(id, props).then(response => {
         Map.dispatch('patched', [response]);
