@@ -5,6 +5,7 @@ import feathers from '../test/feathers-rest';
 import CanService from './canjs-feathers';
 import fixtureData from '../test/fixtures';
 import stache from 'can-stache';
+import canEvent from 'can-event';
 
 const Account = DefineMap.extend('Account', {
   seal: false
@@ -131,13 +132,13 @@ QUnit.test('Map:created event', function(assert){
 
   function handler(ev, data){
     assert.equal(data._id, 1, 'Got the instance in the `created` event.');
-    Account.off('created', handler);
-    assert.ok(Account.off, 'Removed subscription to `created` event.');
+    canEvent.off.call(Account, 'created', handler);
+    // Account.off('created', handler);
+    // assert.ok(Account.off, 'Removed subscription to `created` event.');
     done();
   }
 
-  Account.on('created', handler);
-  assert.ok(Account.on, 'Subscribed to `created` event.');
+  canEvent.on.call(Account, 'created', handler);
 
   var account = new Account({
     name: 'Checking',
@@ -151,13 +152,11 @@ QUnit.test('Map:updated event', function(assert){
 
   function handler(ev, data){
     assert.equal(data._id, 55, 'Got the instance in the `updated` event.');
-    Account.off('updated', handler);
-    assert.ok(Account.off, 'Removed subscription to `updated` event.');
+    canEvent.off.call(Account, 'updated', handler);
     done();
   }
 
-  Account.on('updated', handler);
-  assert.ok(Account.on, 'Subscribed to `updated` event.');
+  canEvent.on.call(Account, 'updated', handler);
 
   var account = new Account({
     _id: 55,
@@ -173,13 +172,11 @@ QUnit.test('Map:patched event', function(assert){
   function handler(ev, data){
     assert.equal(data._id, 2, 'Got the instance in the `patched` event.');
     assert.equal(data.name, 'Jonas', 'Got the new name in the `patched` event.');
-    Account.off('patched', handler);
-    assert.ok(Account.off, 'Removed subscription to `patched` event.');
+    canEvent.off.call(Account, 'patched', handler);
     done();
   }
 
-  Account.on('patched', handler);
-  assert.ok(Account.on, 'Subscribed to `patched` event.');
+  canEvent.on.call(Account, 'patched', handler);
 
   var account = new Account({
     _id: 2,
@@ -194,13 +191,11 @@ QUnit.test('Map:destroyed event', function(assert){
 
   function handler(ev, data){
     assert.equal(data._id, 1, 'Got the instance in the `destroyed` event.');
-    Account.off('destroyed', handler);
-    assert.ok(Account.off, 'Removed subscription to `destroyed` event.');
+    canEvent.off.call(Account, 'destroyed', handler);
     done();
   }
 
-  Account.on('destroyed', handler);
-  assert.ok(Account.on, 'Subscribed to `destroyed` event.');
+  canEvent.on.call(Account, 'destroyed', handler);
 
   var account = new Account({
     _id: 1,
@@ -255,24 +250,28 @@ QUnit.test('lists pull instances from the model store', function(assert){
   });
 });
 
-// QUnit.test('updating stache template from two lists', function(assert){
-//   const done = assert.async();
-//   const Acct = DefineMap.extend({
-//     name: 'string'
-//   });
-//   Acct.List = DefineList.extend({
-//     '*': Acct
-//   });
-//   var account = new Acct(fixtureData[1]);
-//   // var accountList2 = new Acct.List(fixtureData);
-//   // Account.find().then(accountList1 => {
-//     // Account.find().then(accountList2 => {
-//       var template = stache('{{name}}')(account);
-//       assert.equal(template.textContent, 'Savings');
-//       account.name = 'GoodSavings';
-//       assert.equal(account.name, 'GoodSavings');
-//       assert.equal(template.textContent, 'GoodSavings');
-//       done();
-//     // });
-//   // });
-// });
+QUnit.test('updating stache template from two lists', function(assert){
+  const done = assert.async();
+  const Acct = DefineMap.extend({
+    name: 'string'
+  });
+  Acct.List = DefineList.extend({
+    '*': Acct
+  });
+  var account = new Acct({
+    _id: 2,
+    name: 'Savings',
+    balance: 40.33
+  });
+  // var accountList2 = new Acct.List(fixtureData);
+  // Account.find().then(accountList1 => {
+    // Account.find().then(accountList2 => {
+      var template = stache('{{name}}')(account);
+      assert.equal(template.textContent, 'Savings');
+      account.name = 'GoodSavings';
+      assert.equal(account.name, 'GoodSavings');
+      assert.equal(template.textContent, 'GoodSavings');
+      done();
+    // });
+  // });
+});

@@ -1,6 +1,6 @@
 {
   "name": "canjs-feathers",
-  "version": "0.0.0",
+  "version": "1.0.0-pre.0",
   "description": "A set of utils for using CanJS with Feathers on the client.",
   "homepage": "https://github.com/feathersjs/canjs-feathers",
   "repository": {
@@ -71,6 +71,7 @@
     "can-util": "^3.0.0-pre.33",
     "engine.io-client": "^1.6.11",
     "feathers-hooks": "^1.5.5",
+    "feathers-reactive": "^0.3.1",
     "socket.io-parser": "^2.2.6",
     "steal": "^0.16.35"
   },
