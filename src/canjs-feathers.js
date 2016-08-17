@@ -85,14 +85,12 @@ export default function ObservableService(options = {}){
       let id = this[Map.idProp];
       if (id) {
         return service.update(id, this.serialize()).then(response => {
-          canEvent.dispatch.call(Map, 'updated', [response]);
-          // Map.dispatch('updated', [response]);
+          Map.dispatch('updated', [response]);
           return response;
         });
       } else {
         return service.create(this.serialize()).then(response => {
-          canEvent.dispatch.call(Map, 'created', [response]);
-          // Map.dispatch('created', [response]);
+          Map.dispatch('created', [response]);
           return response;
         });
       }
@@ -108,8 +106,7 @@ export default function ObservableService(options = {}){
     patch(props = {}){
       let id = this[Map.idProp];
       return service.patch(id, props).then(response => {
-        canEvent.dispatch.call(Map, 'patched', [response]);
-        // Map.dispatch('patched', [response]);
+        Map.dispatch('patched', [response]);
         return response;
       });
     },
@@ -118,8 +115,7 @@ export default function ObservableService(options = {}){
       let id = this[Map.idProp];
       if (id) {
         return service.remove(id).then(response => {
-          canEvent.dispatch.call(Map, 'destroyed', [response]);
-          // Map.dispatch('destroyed', [response]);
+          Map.dispatch('destroyed', [response]);
           return response;
         });
       }
