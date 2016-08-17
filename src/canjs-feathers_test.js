@@ -251,7 +251,6 @@ QUnit.test('lists pull instances from the model store', function(assert){
 });
 
 QUnit.test('updating stache template from two lists', function(assert){
-  const done = assert.async();
   const Acct = DefineMap.extend({
     name: 'string'
   });
@@ -263,15 +262,10 @@ QUnit.test('updating stache template from two lists', function(assert){
     name: 'Savings',
     balance: 40.33
   });
-  // var accountList2 = new Acct.List(fixtureData);
-  // Account.find().then(accountList1 => {
-    // Account.find().then(accountList2 => {
-      var template = stache('{{name}}')(account);
-      assert.equal(template.textContent, 'Savings');
-      account.name = 'GoodSavings';
-      assert.equal(account.name, 'GoodSavings');
-      assert.equal(template.textContent, 'GoodSavings');
-      done();
-    // });
-  // });
+  var template = stache('{{name}}')(account);
+  assert.equal(template.textContent, 'Savings');
+  account.name = 'GoodSavings';
+  assert.equal(account.name, 'GoodSavings');
+  assert.equal(template.textContent, 'GoodSavings', 'template updated correctly');
+});
 });
