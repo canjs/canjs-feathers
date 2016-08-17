@@ -2,7 +2,7 @@ import QUnit from 'steal-qunit';
 import DefineMap from 'can-define/map/';
 import DefineList from 'can-define/list/';
 import feathers from '../test/feathers-rest';
-import CanService from './canjs-feathers';
+import Connection from './canjs-feathers';
 import fixtureData from '../test/fixtures';
 import stache from 'can-stache';
 import canEvent from 'can-event';
@@ -26,7 +26,7 @@ Account.List = DefineList.extend({
   total: 'number'
 });
 
-const service = new CanService({
+const service = new Connection({
   service: feathers.service('v1/accounts'),
   idProp: '_id',
   Map: Account,
@@ -222,7 +222,7 @@ QUnit.test('custom id as getter function', function(assert){
     idInReponse: 'string'
   });
 
-  new CanService({
+  new Connection({
     service: feathers.service('people'),
     idProp: 'id',
     Map: Person,
@@ -268,4 +268,23 @@ QUnit.test('updating stache template from two lists', function(assert){
   assert.equal(account.name, 'GoodSavings');
   assert.equal(template.textContent, 'GoodSavings', 'template updated correctly');
 });
+
+QUnit.test('Map.find first arg is query object.', function(assert){
+  const done = assert.async();
+  const Robot = DefineMap.extend('Robot', {
+    seal: false
+  }, {
+    '_id': '*',
+    model: {type: 'string'}
+  });
+  new Connection({
+    service: feathers.service('v1/robots'),
+    idProp: '_id',
+    Map: Robot,
+    name: 'Robot',
+  });
+  Robot.find({model: 'T1000'}).then(response => {
+    assert.equal(response[0].model, 'T1000');
+    done();
+  });
 });

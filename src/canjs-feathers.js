@@ -63,8 +63,8 @@ export default function ObservableService(options = {}){
   Object.assign(Map, {
     idProp: options.idProp,
 
-    find(params){
-      return service.find(params);
+    find(query){
+      return service.find({query});
     },
 
     get(id, params){

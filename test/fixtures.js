@@ -55,3 +55,12 @@ fixture({url: "/people/BobMinion", method: "put"}, function(request, response){
   request.data.idInReponse = request.url.replace('/people/', '');
   response(Object.assign({}, request.data));
 });
+
+// Test that query params come in properly for `find` requests.
+fixture({url: "/v1/robots", method: "get"}, function(request, response){
+  var robots = [{
+    id: 4,
+    model: 'T1000'
+  }];
+  response(request.data.model ? robots : {error: 'no query object.'});
+});
