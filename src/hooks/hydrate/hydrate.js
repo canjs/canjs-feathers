@@ -22,13 +22,16 @@ module.exports = function(options){
         throw new Error('Please pass a List constructor.');
       }
 
+      // Pagination is not enabled. `result` is an array.
       if (Array.isArray(hook.result)) {
         hook.result = new List(hook.result);
+
+      // Pagination was enabled, so find the array at `result.data`
       } else {
         let data = new List(hook.result.data);
         delete hook.result.data;
 
-        // Assign the pagination attributes as expandos on the List.
+        // Assign the `limit`, `skip`, and `total` attributes as expandos on the List.
         Object.assign(data, hook.result);
 
         hook.result.data = data;
