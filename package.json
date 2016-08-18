@@ -1,6 +1,6 @@
 {
   "name": "canjs-feathers",
-  "version": "1.0.0-pre.2",
+  "version": "1.0.0-pre.3",
   "description": "A set of utils for using CanJS with Feathers on the client.",
   "homepage": "https://github.com/feathersjs/canjs-feathers",
   "repository": {
