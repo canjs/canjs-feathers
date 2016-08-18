@@ -205,6 +205,27 @@ QUnit.test('Map:destroyed event', function(assert){
   account.destroy();
 });
 
+QUnit.test('must pass Map and List constructors', function(assert){
+  const Pet = DefineMap.extend('Pet', {
+    id: '*'
+  });
+
+  assert.throws(function(){
+    new Connection({
+      service: feathers.service('people'),
+      idProp: 'id'
+    });
+  }, /Map/, 'threw an error when not passing a Map');
+
+  assert.throws(function(){
+    new Connection({
+      service: feathers.service('people'),
+      idProp: 'id',
+      Map: Pet
+    });
+  }, /List/, 'threw an error when not passing a List');
+});
+
 QUnit.test('custom id as getter function', function(assert){
   const done = assert.async();
 
@@ -220,6 +241,9 @@ QUnit.test('custom id as getter function', function(assert){
     first: {type: 'string'},
     last: {type: 'string'},
     idInReponse: 'string'
+  });
+  Person.List = DefineList.extend({
+    '*': Person
   });
 
   new Connection({
@@ -276,6 +300,9 @@ QUnit.test('Map.find first arg is query object.', function(assert){
   }, {
     '_id': '*',
     model: {type: 'string'}
+  });
+  Robot.List = DefineList.extend({
+    '*': Robot
   });
   new Connection({
     service: feathers.service('v1/robots'),

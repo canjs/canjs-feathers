@@ -1,4 +1,3 @@
-import DefineList from 'can-define/list/';
 import canEvent from 'can-event';
 import hydrate from './hooks/hydrate/';
 import deepAssign from 'can-util/js/deep-assign/deep-assign';
@@ -6,6 +5,9 @@ import deepAssign from 'can-util/js/deep-assign/deep-assign';
 export default function ObservableService(options = {}){
   if (!options.Map) {
     throw new Error('Please provide a Map Constructor.');
+  }
+  if (!options.Map.List && !options.List) {
+    throw new Error('Please provide a List Constructor.');
   }
   if (!options.service) {
     throw new Error('Please provide a feathers service.');
@@ -24,12 +26,12 @@ export default function ObservableService(options = {}){
   }
 
   const Map = options.Map;
+  const List = Map.List || options.List;
   const defaults = {
     idProp: '_id',
     name: name,
-    List: DefineList.extend({
-      '*': Map
-    }),
+    Map,
+    List,
     store: {}
   };
   Object.assign(service, defaults, options);
