@@ -47,7 +47,6 @@ export default function ObservableService(options = {}){
       // look in the service.store to see if the object already exists
       var cachedInst = service.store[id];
       if(cachedInst) {
-        steal.dev.log(`Updating ${service.name}`);
         cachedInst = deepAssign(cachedInst, props);
         return cachedInst;
       }
