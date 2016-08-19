@@ -17,7 +17,7 @@
     "version": "git commit -am \"Update dist for release\" && git checkout -b release && git add -f dist/",
     "postversion": "git push --tags && git checkout master && git branch -D release && git push",
     "testee": "testee test/test.html --browsers firefox",
-    "test": "npm run jshint && npm run testee",
+    "test": "npm run testee",
     "jshint": "jshint --config src/.",
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
