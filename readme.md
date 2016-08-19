@@ -2,7 +2,76 @@
 
 [![Build Status](https://travis-ci.org/feathersjs/canjs-feathers.png?branch=master)](https://travis-ci.org/feathersjs/canjs-feathers)
 
-A set of utils for using CanJS with Feathers on the client.
+A set of utils for using CanJS with Feathers client.
+
+## Installation
+```
+npm install canjs-feathers --save
+```
+
+## Documentation
+Please refer to the [Feathers + CanJS](http://docs.feathersjs.com/frameworks/canjs.html) page in the official Feathers docs.
+
+## Complete Example
+Here's an example of setting up a feathers connection and Account Model for your CanJS application.
+```js
+import feathers from 'feathers/client';
+import socketio from 'feathers-socketio/client';
+import hooks from 'feathers-hooks';
+import io from 'socket.io-client';
+import rxjs from 'rxjs';
+import rx from 'feathers-reactive';
+
+const host = 'http://localhost:3030';
+const socket = io(host, {
+  transports: ['websocket'],
+  forceReconnect: true
+});
+const app = feathers()
+	// Use the feathers-reactive plugin for live-updating lists!
+  .configure(rx(rxjs, {
+    idField: '_id'
+  }))
+  .configure(hooks())
+  .configure(socketio(socket));
+
+// Model creation would usually go in its own file,
+// but here it is inline for simplicity.
+import DefineMap from 'can-define/map/';
+import DefineList from 'can-define/list/';
+import Connection from 'canjs-feathers';
+
+// Define a Robot Model.
+const Robot = DefineMap.extend('Robot', {
+	seal: false
+}, {
+	'_id': '*',
+	model: {type: 'string'}
+});
+
+// Define a Robot.List.
+Robot.List = DefineList.extend({
+	'*': Robot
+});
+
+// Combine the best of both CanJS and Feathers.
+new Connection({
+	service: app.service('v1/robots'),
+	idProp: '_id',
+	Map: Robot
+});
+
+// You can now use `find` directly from the Robot model.
+Robot.find({model: 'T1000'}).then(response => {
+	// The returned data will be a List (Observable array) of Robot instances.
+	console.log(response);
+});
+
+// Using the service directly will also return Robot instances.
+app.service('v1/robots').find({}).then(response => {
+	console.log(response); // --> Robot instances!
+});
+```
 
 ## Usage
 
@@ -72,3 +141,9 @@ Automated tests that run the tests from the command line in Firefox can be run w
 ```
 npm test
 ```
+
+## License
+
+Copyright (c) 2016, FeathersJS
+
+Licensed under the [MIT license](LICENSE).
