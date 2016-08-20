@@ -22,12 +22,8 @@ module.exports = function(options){
         throw new Error('Please pass a List constructor.');
       }
 
-      // Pagination is not enabled. `result` is an array.
-      if (Array.isArray(hook.result)) {
-        hook.result = new List(hook.result);
-
       // Pagination was enabled, so find the array at `result.data`
-      } else {
+      if (hook.result.data) {
         let data = new List(hook.result.data);
         delete hook.result.data;
 
@@ -35,6 +31,10 @@ module.exports = function(options){
         Object.assign(data, hook.result);
 
         hook.result.data = data;
+
+      // Pagination is not enabled. `result` is an array.
+      } else {
+        hook.result = new List(hook.result);
       }
       return hook;
 

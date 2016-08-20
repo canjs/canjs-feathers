@@ -1,5 +1,7 @@
 import canEvent from 'can-event';
 import hydrate from './hooks/hydrate/';
+import cache from './hooks/cache/';
+import translateIds from './hooks/translate-ids/';
 import deepAssign from 'can-util/js/deep-assign/deep-assign';
 
 export default function ObservableService(options = {}){
@@ -15,7 +17,9 @@ export default function ObservableService(options = {}){
 
   let name = options.name || options.Map.constructor.prototype.name;
   if (name === 'Map') {
-    steal.dev.log('Debugging will be easier if you give your Map a name.');
+    if(steal){
+      steal.dev.log('Debugging will be easier if you give your Map a name.');
+    }
   }
 
   const service = options.service;
@@ -25,17 +29,22 @@ export default function ObservableService(options = {}){
     throw new Error('The feathers-hooks plugin is required.');
   }
 
+  // If provided, flatten the cache object into the options.
+  if (options.cache) {
+    options.cacheService = options.cache.service;
+    options.cacheIdProp = options.cache.cacheIdProp;
+  }
+
   const Map = options.Map;
   const List = Map.List || options.List;
   const defaults = {
     idProp: '_id',
-    name: name,
+    modelName: name,
     Map,
     List,
-    store: {}
+    modelStore: {}
   };
   Object.assign(service, defaults, options);
-
 
   // store a reference to the original newInstance function
   var _newInstance = Map.newInstance;
@@ -43,35 +52,101 @@ export default function ObservableService(options = {}){
   // override the Map's newInstance function
   Map.newInstance = function(props) {
     let id = props[service.idProp];
+
+    // If there's an id, look in the service.modelStore to see if the object already exists
     if (id) {
-      // look in the service.store to see if the object already exists
-      var cachedInst = service.store[id];
+      var cachedInst = service.modelStore[id];
       if(cachedInst) {
         cachedInst = deepAssign(cachedInst, props);
         return cachedInst;
       }
     }
 
-    //otherwise call the original newInstance function and return a new instance of Person.
+    // There was no id, call the original newInstance function and return a new
+    // instance of Person.
     var newInst = _newInstance.apply(this, arguments);
     if (id) {
-      service.store[id] = newInst;
+      service.modelStore[id] = newInst;
     }
     return newInst;
   };
 
   // Extend the Map
   Object.assign(Map, {
-    idProp: options.idProp,
+    idProp: service.idProp,
 
+    /**
+     * `Map.find` will run the provided query against the internal Feathers service.
+     * If a cacheService was provided and `$fromCache` is provided in the query, the
+     * query will only run against the `cacheService`.
+     */
     find(query){
+      if (service.cacheService && query.$fromCache) {
+        delete query.$fromCache;
+        return service.cacheService.find({query});
+      }
       return service.find({query});
     },
 
+    /**
+     * `Map.get` will run the provided query against the internal Feathers service.
+     * If a cacheService was provided and `$fromCache` is provided in the params, the
+     * query will only run against the `cacheService`.
+     */
     get(id, params){
+      if (service.cacheService && params.$fromCache) {
+        delete params.$fromCache;
+        return service.cacheService.get(id, params);
+      }
       return service.get(id, params);
     }
   }, canEvent);
+
+  // Setup access to cache service through the Map.cache object.
+  if (service.cacheService) {
+    Object.assign(Map, {
+      cache: {
+        find(query){
+          return service.cacheService.find({query});
+        },
+
+        get(id, params){
+          return service.cacheService.get(id, params);
+        }
+      }
+    });
+
+    service.cacheService.before({
+      all: [
+        // Prevent overwriting the idProp of the cached data.
+        translateIds({
+          remoteIdProp: service.idProp,
+          cacheIdProp: service.cacheIdProp
+        })
+      ]
+    });
+
+    service.cacheService.after({
+      all: [
+        // Restore the original idProp of the cached data.
+        translateIds({
+          remoteIdProp: service.idProp,
+          cacheIdProp: service.cacheIdProp
+        }),
+        // Make sure results from the cache are DefineMaps and DefineLists
+        hydrate({ Map, List })
+      ]
+    });
+
+    Object.assign(Map.constructor.prototype, {
+      cache(){
+        return service.cacheService.create(this.serialize()).then(cachedInstance => {
+          Map.dispatch('cached', [cachedInstance]);
+          return cachedInstance;
+        });
+      }
+    });
+  }
 
   // Extend the Map instances.
   Object.assign(Map.constructor.prototype, {
@@ -137,10 +212,29 @@ export default function ObservableService(options = {}){
     }
   });
 
+  // Add before hooks.
+  service.before({
+    all: [],
+    find: [
+      cache.find()
+    ],
+    get: [],
+    create: [],
+    update: [],
+    patch: [],
+    remove: []
+  });
 
+  // Add after hooks.
   service.after({
     all: [
       hydrate()
+    ],
+    find: [
+      cache.merge()
+    ],
+    create: [
+      cache.mergeOne()
     ]
   });
 
