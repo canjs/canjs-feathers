@@ -62,17 +62,6 @@ export default function(options){
     return object;
   }
 
-  // function cacheIn(obj, opts){
-  //   var object = getCleanObject(obj);
-  //   object[opts.storedCacheIdProp] = object[opts.cacheIdProp];
-  //   delete object[opts.cacheIdProp];
-  //   if (object[opts.storedRemoteIdProp] !== null && object[opts.storedRemoteIdProp !== undefined]) {
-  //     object[opts.remoteIdProp] = object[opts.storedRemoteIdProp];
-  //     delete object[opts.storedRemoteIdProp];
-  //   }
-  //   return object;
-  // }
-
   /**
    * `cacheOut` restores data to its out-of-cache state.
    */
@@ -91,7 +80,7 @@ export default function(options){
     var {remoteIdProp} = options;
 
     if (!remoteIdProp) {
-      throw new Error('Please setup a `remoteIdProp` for the translateIds hook. See the docs.');
+      console.error('Please setup a `remoteIdProp` for the translateIds hook. See the docs.');
     }
 
     // Handle as a before hook.  Data/params are GOING IN to the cache.

@@ -102,7 +102,7 @@ QUnit.test('Extends the original service, Map, and List', function(assert) {
   assert.equal(accountService.idProp, '_id', 'Adds the idProp to the service.');
 
   assert.equal(Account.cache, undefined, 'No cache object is available by default.');
-  assert.deepEqual(Account.store, {}, 'Map.store is setup & empty.');
+  assert.ok(Account.store, 'Map.store is setup.');
   assert.equal(typeof Account.find, 'function', 'Adds the find function to the Map.');
   assert.equal(typeof Account.get, 'function', 'Adds the get function to the Map.');
 
@@ -335,6 +335,7 @@ QUnit.test('updating stache template from two lists', function(assert) {
   assert.equal(account.name, 'GoodSavings');
   assert.equal(template.textContent, 'GoodSavings', 'template updated correctly');
 });
+
 
 QUnit.test('cacheService tests.', function(assert) {
   const done = assert.async();

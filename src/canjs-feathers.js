@@ -2,7 +2,8 @@ import canEvent from 'can-event';
 import hydrate from './hooks/hydrate/';
 import cache from './hooks/cache/';
 import translateIds from './hooks/translate-ids/';
-import deepAssign from 'can-util/js/deep-assign/deep-assign';
+import setupModelStore from './new-instance/model-store';
+import setupModelStoreWithCache from './new-instance/model-store-cache';
 
 export default function ObservableService(options = {}){
   if (!options.Map) {
@@ -35,7 +36,19 @@ export default function ObservableService(options = {}){
   // If provided, flatten the cache object into the options.
   if (options.cache) {
     options.cacheService = options.cache.service;
-    options.cacheIdProp = options.cache.cacheIdProp;
+    delete options.cache.service;
+    Object.assign(options, {
+      cacheOptions: {
+        // The id property in the remote database
+        remoteIdProp: options.idProp,
+        // Where the remote id is stored while cached.
+        storedRemoteIdProp: options.cache.storedRemoteIdProp || '__remoteId',
+        // The id property in the local cache service.
+        cacheIdProp: options.cache.cacheIdProp,
+        // A reference to the id in the cache.
+        storedCacheIdProp: options.cache.storedCacheIdProp || '__cacheId'
+      }
+    });
   }
 
   const Map = options.Map;
@@ -82,36 +95,33 @@ export default function ObservableService(options = {}){
     }
   }, canEvent);
 
-
-  // store a reference to the original Map.newInstance function
-  var _newInstance = Map.newInstance;
-
-  // override the Map's newInstance function
+  /**
+   * override the Map's newInstance function. If a newInstanceFn was provided,
+   * use it, otherwise use the built-in ones for the Model Store or the Model
+   * Store with Cache.
+   */
+  var _newInstance = Map.newInstance; // reference to the original Map.newInstance fn
   Map.newInstance = function(props) {
-    let id = props[service.idProp];
-
-    // If there's an id, look in the Map.store to see if the object already exists
-    if (id) {
-      var cachedInst = Map.store[id];
-      if(cachedInst) {
-        // Copy all new attributes to the cached instance and return it.
-        cachedInst = deepAssign(cachedInst, props);
-        return cachedInst;
-      }
+    // If a newInstanceFn was provided, use it, otherwise use the built-in
+    // ones for the Model Store or the Model Store with Cache.
+    if (typeof service.newInstanceFn === 'function') {
+      return service.newInstanceFn.call(this, props, Map, service, _newInstance);
     }
-
-    // There was no id, call the original newInstance function and return a new
-    // instance of Person.
-    var newInst = _newInstance.apply(this, arguments);
-    if (id) {
-      Map.store[id] = newInst;
+    // If a cacheService was provided, use its special newInstanceFn.
+    if (service.cacheService) {
+      return setupModelStoreWithCache.call(this, props, Map, service, _newInstance);
     }
-    return newInst;
+    // Use the model store without cache.
+    return setupModelStore.call(this, props, Map, service, _newInstance);
   };
 
 
-  // Setup access to cache service through the Map.cache object.
+  /**
+   * Setup access to cache service through the Map.cache object.
+   */
   if (service.cacheService) {
+
+    // Add cache.find and cache.get methods to the Map to directly query the cache.
     Object.assign(Map, {
       cache: {
         find(query){
@@ -124,28 +134,25 @@ export default function ObservableService(options = {}){
       }
     });
 
+    // Setup before hooks on the cacheService.
     service.cacheService.before({
       all: [
         // Prevent overwriting the idProp of the cached data.
-        translateIds({
-          remoteIdProp: service.idProp,
-          cacheIdProp: service.cacheIdProp
-        })
+        translateIds(service.cacheOptions)
       ]
     });
 
+    // Setup after hooks on the cacheService.
     service.cacheService.after({
       all: [
         // Restore the original idProp of the cached data.
-        translateIds({
-          remoteIdProp: service.idProp,
-          cacheIdProp: service.cacheIdProp
-        }),
+        translateIds(service.cacheOptions),
         // Make sure results from the cache are DefineMaps and DefineLists
         hydrate({ Map, List })
       ]
     });
 
+    // Make it possible to call `cache` on Map instances to save them to the cache.
     Object.assign(Map.constructor.prototype, {
       cache(){
         return service.cacheService.create(this.serialize()).then(cachedInstance => {
@@ -243,6 +250,15 @@ export default function ObservableService(options = {}){
     ],
     create: [
       cache.mergeOne()
+    ],
+    update: [
+      cache.mergeOne()
+    ],
+    patch: [
+      cache.mergeOne()
+    ],
+    remove: [
+      // cache.removeOne()
     ]
   });
 
