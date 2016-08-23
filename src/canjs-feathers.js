@@ -14,6 +14,9 @@ export default function ObservableService(options = {}){
   if (!options.service) {
     throw new Error('Please provide a feathers service.');
   }
+  if (!options.idProp) {
+    throw new Error('Please provide an idProp.');
+  }
 
   let name = options.name || options.Map.constructor.prototype.name;
   if (name === 'Map') {
@@ -38,7 +41,7 @@ export default function ObservableService(options = {}){
   const Map = options.Map;
   const List = Map.List || options.List;
   const defaults = {
-    idProp: '_id',
+    idProp: undefined,
     modelName: name,
     Map,
     List
