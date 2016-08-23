@@ -50,7 +50,7 @@ export function getCleanObject(obj){
  */
 export function cacheIn(obj, opts){
   var object = getCleanObject(obj);
-  
+
   // Don't copy the prop if it's already in place.  Calls from create-or-update.js, for example,
   // will already have the correct properties in place because that hook runs after this one.
   if (object[opts.storedRemoteIdProp] === undefined) {
@@ -61,7 +61,7 @@ export function cacheIn(obj, opts){
 
   // Don't copy the cacheIdProp if it's already in place.
   if (object[opts.storedCacheIdProp] === undefined) {
-    if (object[opts.cacheIdProp]) {
+    if (object[opts.cacheIdProp] !== undefined) {
       object[opts.storedCacheIdProp] = object[opts.cacheIdProp];
       delete object[opts.cacheIdProp];
     }
