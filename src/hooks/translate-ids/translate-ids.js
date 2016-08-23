@@ -23,7 +23,7 @@
  *    is added by this name to items pulled from the cache. This is helpful for
  *    debugging cache issues.
  */
-const defaults = {
+export const defaults = {
   remoteIdProp: undefined,
   storedRemoteIdProp: '__remoteId', // Where the remote id is stored while cached.
   cacheIdProp: undefined, // The id property in the local cache service.
@@ -31,50 +31,58 @@ const defaults = {
 };
 
 /**
+ * `getCleanObject` helps make sure that the original object is never modified
+ * and that if a DefineMap is passed, that we use the plain object representation
+ * of the data it contains.
+ * @param  {[type]} obj or DefineMap
+ * @return {[type]} obj
+ */
+export function getCleanObject(obj){
+  if (obj.get) {
+    obj = obj.get();
+    return obj;
+  }
+  return Object.assign({}, obj);
+}
+
+/**
+ * `cacheIn` prepares data to be saved into the cache.
+ */
+export function cacheIn(obj, opts){
+  var object = getCleanObject(obj);
+  // Copies `object.__remoteId` to `object._id`  It's ok if remoteIdProp is undefined.
+  object[opts.storedRemoteIdProp] = object[opts.remoteIdProp];
+  delete object[opts.remoteIdProp];
+  if (object[opts.storedCacheIdProp]) {
+    object[opts.cacheIdProp] = object[opts.storedCacheIdProp];
+    delete object[opts.storedCacheIdProp];
+  }
+  return object;
+}
+
+/**
+ * `cacheOut` restores data to its out-of-cache state.
+ */
+export function cacheOut(obj, opts){
+  var object = getCleanObject(obj);
+  // Copy the __remoteId to the _id if it's not undefined. Always remove the __remoteId.
+  if (object[opts.storedRemoteIdProp] !== null && object[opts.storedRemoteIdProp] !== undefined) {
+    object[opts.remoteIdProp] = object[opts.storedRemoteIdProp];
+  }
+  delete object[opts.storedRemoteIdProp];
+
+  // The id that it was stored under is copied to another attribute
+  // on data retrieved from the cache.
+  object[opts.storedCacheIdProp] = object[opts.cacheIdProp];
+  delete object[opts.cacheIdProp];
+  return object;
+}
+
+/**
  * The `remoteIdProp` is the only required option.
  */
 export default function(options){
   options = Object.assign({}, defaults, options);
-
-  /**
-   * `getCleanObject` helps make sure that the original object is never modified
-   * and that if a DefineMap is passed, that we use the plain object representation
-   * of the data it contains.
-   * @param  {[type]} obj or DefineMap
-   * @return {[type]} obj
-   */
-  function getCleanObject(obj){
-    if (obj.get) {
-      obj = obj.get();
-      return obj;
-    }
-    return Object.assign({}, obj);
-  }
-
-  /**
-   * `cacheIn` prepares data to be saved into the cache.
-   */
-  function cacheIn(obj, opts){
-    var object = getCleanObject(obj);
-    // Copies `object.__remoteId` to `object._id`  It's ok if remoteIdProp is undefined.
-    object[opts.storedRemoteIdProp] = object[opts.remoteIdProp];
-    delete object[opts.remoteIdProp];
-    return object;
-  }
-
-  /**
-   * `cacheOut` restores data to its out-of-cache state.
-   */
-  function cacheOut(obj, opts){
-    var object = getCleanObject(obj);
-    object[opts.remoteIdProp] = object[opts.storedRemoteIdProp];
-    delete object[opts.storedRemoteIdProp];
-    // The id that it was stored under is copied to another attribute
-    // on data retrieved from the cache.
-    object[opts.storedCacheIdProp] = object[opts.cacheIdProp];
-    delete object[opts.cacheIdProp];
-    return object;
-  }
 
   return function(hook){
     var {remoteIdProp} = options;
@@ -102,6 +110,7 @@ export default function(options){
 
         // before update
         case 'update':
+          hook.data = cacheIn(hook.data, options);
           break;
 
         // before patch
@@ -144,6 +153,7 @@ export default function(options){
 
         // after update
         case 'update':
+          hook.result = cacheOut(hook.result, options);
           break;
 
         // after patch
