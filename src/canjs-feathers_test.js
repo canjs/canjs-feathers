@@ -96,39 +96,29 @@ QUnit.test('Extends the original service, Map, and List', function(assert) {
   resetAccountService();
 
   assert.equal(typeof accountService.find, 'function', 'Returns the service.');
-  assert.equal(typeof accountService.Map, 'function',
-    'Adds the Map to the service.');
-  assert.equal(typeof accountService.List, 'function',
-    'Adds the List to the service.');
+  assert.equal(typeof accountService.Map, 'function', 'Adds the Map to the service.');
+  assert.equal(typeof accountService.List, 'function', 'Adds the List to the service.');
   assert.equal(accountService.name, 'Account', 'Adds the Map name to the service.');
   assert.equal(accountService.idProp, '_id', 'Adds the idProp to the service.');
 
-  assert.equal(Account.cache, undefined,
-    'No cache object is available by default.');
-  assert.equal(typeof Account.find, 'function',
-    'Adds the find function to the Map.');
-  assert.equal(typeof Account.get, 'function',
-    'Adds the get function to the Map.');
+  assert.equal(Account.cache, undefined, 'No cache object is available by default.');
+  assert.deepEqual(Account.store, {}, 'Map.store is setup & empty.');
+  assert.equal(typeof Account.find, 'function', 'Adds the find function to the Map.');
+  assert.equal(typeof Account.get, 'function', 'Adds the get function to the Map.');
 
   let account = new Account({
     name: 'Checking'
   });
 
-  assert.equal(typeof account.save, 'function',
-    'Adds the save function to map instances.');
-  assert.equal(typeof account.patch, 'function',
-    'Adds the patch function to map instances.');
-  assert.equal(typeof account.destroy, 'function',
-    'Adds the destroy function to map instances.');
+  assert.equal(typeof account.save, 'function', 'Adds the save function to map instances.');
+  assert.equal(typeof account.patch, 'function', 'Adds the patch function to map instances.');
+  assert.equal(typeof account.destroy, 'function', 'Adds the destroy function to map instances.');
 
   let accounts = new Account.List([]);
 
-  assert.equal(typeof accounts.save, 'function',
-    'Adds the save function to list instances.');
-  assert.equal(typeof accounts.patch, 'function',
-    'Adds the patch function to list instances.');
-  assert.equal(typeof accounts.destroy, 'function',
-    'Adds the destroy function to list instances.');
+  assert.equal(typeof accounts.save, 'function', 'Adds the save function to list instances.');
+  assert.equal(typeof accounts.patch, 'function', 'Adds the patch function to list instances.');
+  assert.equal(typeof accounts.destroy, 'function', 'Adds the destroy function to list instances.');
 });
 
 
@@ -354,6 +344,7 @@ QUnit.test('cacheService tests.', function(assert) {
   assert.ok(Robot.cache.find, 'find method was available on Map.cache.');
   assert.ok(Robot.cache.get, 'find method was available on Map.cache.');
 
+  // Create and save a new Robot instance, then query the cache for all records.
   new Robot({
     model: 'T1000'
   })
@@ -362,30 +353,38 @@ QUnit.test('cacheService tests.', function(assert) {
     assert.equal(response._id, 0, 'got the correct id back');
     assert.equal(response.model, 'T1000', 'got the correct robot model back');
 
-    Robot.cache.find({}).then(response => {
-      assert.ok(response.get, 'The cacheService hydrates into DefineMaps & DefineLists.');
-      assert.deepEqual(response[0].get(), {
-        _id: 0,
-        __cacheId: 1,
-        model: 'T1000'
-      }, 'correct ids set on the data');
+    return Robot.cache.find({});
 
-      robotService.cacheService.create({
-        model: 'T8000'
-      }).then(instance => {
-        assert.ok(instance instanceof Robot, 'got Model instance');
-        assert.equal(instance._id, undefined, 'no remote _id is assigned to the data');
-        assert.equal(instance.__cacheId, 2, 'the data has a __cacheId');
+  // Check the response from the cache query to see if we got the Robot instance
+  // that we created earlier.  Then create an instance directly in the cacheService.
+  }).then(response => {
+    assert.ok(response.get, 'The cacheService hydrates into DefineMaps & DefineLists.');
+    assert.deepEqual(response[0].get(), {
+      _id: 0,
+      __cacheId: 1,
+      model: 'T1000'
+    }, 'correct ids set on the data');
 
-        new Robot({
-          model: 'T9000'
-        }).cache().then(instance => {
-          assert.ok(instance instanceof Robot, 'got Model instance');
-          assert.equal(instance._id, undefined, 'no remote _id is assigned to the data');
-          assert.equal(instance.__cacheId, 3, 'the data has a __cacheId');
-          done();
-        });
-      });
+    return robotService.cacheService.create({
+      model: 'T8000'
     });
+
+  // Check that we were able to create a model instance, then run instance.cache()
+  // which is the basically the same as `cacheService.create`.
+  }).then(instance => {
+    assert.ok(instance instanceof Robot, 'got Model instance');
+    assert.equal(instance._id, undefined, 'no remote _id is assigned to the data');
+    assert.equal(instance.__cacheId, 2, 'the data has a __cacheId');
+
+    return new Robot({
+      model: 'T9000'
+    }).cache();
+
+  // Verify that the new instance was saved to the cache.
+  }).then(instance => {
+    assert.ok(instance instanceof Robot, 'got Model instance');
+    assert.equal(instance._id, undefined, 'no remote _id is assigned to the data');
+    assert.equal(instance.__cacheId, 3, 'the data has a __cacheId');
+    done();
   });
 });

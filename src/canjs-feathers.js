@@ -41,39 +41,16 @@ export default function ObservableService(options = {}){
     idProp: '_id',
     modelName: name,
     Map,
-    List,
-    modelStore: {}
+    List
   };
   Object.assign(service, defaults, options);
-
-  // store a reference to the original newInstance function
-  var _newInstance = Map.newInstance;
-
-  // override the Map's newInstance function
-  Map.newInstance = function(props) {
-    let id = props[service.idProp];
-
-    // If there's an id, look in the service.modelStore to see if the object already exists
-    if (id) {
-      var cachedInst = service.modelStore[id];
-      if(cachedInst) {
-        cachedInst = deepAssign(cachedInst, props);
-        return cachedInst;
-      }
-    }
-
-    // There was no id, call the original newInstance function and return a new
-    // instance of Person.
-    var newInst = _newInstance.apply(this, arguments);
-    if (id) {
-      service.modelStore[id] = newInst;
-    }
-    return newInst;
-  };
 
   // Extend the Map
   Object.assign(Map, {
     idProp: service.idProp,
+
+    // The model store.
+    store: {},
 
     /**
      * `Map.find` will run the provided query against the internal Feathers service.
@@ -101,6 +78,34 @@ export default function ObservableService(options = {}){
       return service.get(id, params);
     }
   }, canEvent);
+
+
+  // store a reference to the original Map.newInstance function
+  var _newInstance = Map.newInstance;
+
+  // override the Map's newInstance function
+  Map.newInstance = function(props) {
+    let id = props[service.idProp];
+
+    // If there's an id, look in the Map.store to see if the object already exists
+    if (id) {
+      var cachedInst = Map.store[id];
+      if(cachedInst) {
+        // Copy all new attributes to the cached instance and return it.
+        cachedInst = deepAssign(cachedInst, props);
+        return cachedInst;
+      }
+    }
+
+    // There was no id, call the original newInstance function and return a new
+    // instance of Person.
+    var newInst = _newInstance.apply(this, arguments);
+    if (id) {
+      Map.store[id] = newInst;
+    }
+    return newInst;
+  };
+
 
   // Setup access to cache service through the Map.cache object.
   if (service.cacheService) {
