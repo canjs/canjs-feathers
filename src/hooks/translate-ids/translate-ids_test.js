@@ -78,7 +78,7 @@ QUnit.test('Pass object with _id', function(assert) {
   };
   var options = Object.assign({}, defaults, {
     remoteIdProp: '_id',
-    cacheIdProp: 'id'
+    storedCacheIdProp: 'id'
   });
   var obj = cacheIn(account, options);
   assert.deepEqual(obj, {
@@ -94,7 +94,7 @@ QUnit.test('Pass object with __cacheId', function(assert) {
   };
   var options = Object.assign({}, defaults, {
     remoteIdProp: '_id',
-    cacheIdProp: 'id'
+    storedCacheIdProp: 'id'
   });
   var obj = cacheIn(account, options);
   assert.deepEqual(obj, {
@@ -112,10 +112,34 @@ QUnit.test('Pass object with _id and __cacheId', function(assert) {
   };
   var options = Object.assign({}, defaults, {
     remoteIdProp: '_id',
-    cacheIdProp: 'id'
+    storedCacheIdProp: 'id'
   });
   var obj = cacheIn(account, options);
   assert.deepEqual(obj, {
+    name: 'Checking',
+    __remoteId: 1,
+    id: 3,
+  }, 'Object has the expected params.');
+});
+
+QUnit.test('Pass object that has already been processed', function(assert) {
+  var account = {
+    _id: 1,
+    __cacheId: 3,
+    name: 'Checking'
+  };
+  var options = Object.assign({}, defaults, {
+    remoteIdProp: '_id',
+    storedCacheIdProp: 'id'
+  });
+  var obj1 = cacheIn(account, options);
+  var obj2 = cacheIn(obj1, options);
+  assert.deepEqual(obj1, {
+    name: 'Checking',
+    __remoteId: 1,
+    id: 3,
+  }, 'Object has the expected params.');
+  assert.deepEqual(obj2, {
     name: 'Checking',
     __remoteId: 1,
     id: 3,
@@ -145,7 +169,7 @@ QUnit.test('Pass object with id', function(assert) {
   };
   var options = Object.assign({}, defaults, {
     remoteIdProp: '_id',
-    cacheIdProp: 'id'
+    storedCacheIdProp: 'id'
   });
   var obj = cacheOut(account, options);
   assert.deepEqual(obj, {
@@ -162,7 +186,7 @@ QUnit.test('Pass object with id and __remoteId', function(assert) {
   };
   var options = Object.assign({}, defaults, {
     remoteIdProp: '_id',
-    cacheIdProp: 'id'
+    storedCacheIdProp: 'id'
   });
   var obj = cacheOut(account, options);
   assert.deepEqual(obj, {

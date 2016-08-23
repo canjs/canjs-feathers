@@ -15,19 +15,19 @@
  *    `remoteIdProp` would have to match this id property.
  *  - The `storedRemoteIdProp` is the key where the remote id is stored while the
  *    data is in the cache.
- *  - The `cacheIdProp` is the id of the object inside the cacheService.  You need
+ *  - The `storedCacheIdProp` is the id of the object inside the cacheService.  You need
  *    to make sure it exactly matches whatever your cacheService uses, or the
  *    overrided value, if that's possible.  NeDB in the browser, for example,
- *    is hard-coded to use `_id`, so you'd need to set the `cacheIdProp` to `_id`.
- *  - The `storedCacheIdProp` is a copy of the id inside the cacheService, but it
+ *    is hard-coded to use `_id`, so you'd need to set the `storedCacheIdProp` to `_id`.
+ *  - The `cacheIdProp` is a copy of the id inside the cacheService, but it
  *    is added by this name to items pulled from the cache. This is helpful for
  *    debugging cache issues.
  */
 export const defaults = {
   remoteIdProp: undefined,
   storedRemoteIdProp: '__remoteId', // Where the remote id is stored while cached.
-  cacheIdProp: undefined, // The id property in the local cache service.
-  storedCacheIdProp: '__cacheId' // A reference to the id in the cache.
+  cacheIdProp: '__cacheId', // A reference to the id in the cache.
+  storedCacheIdProp: undefined // The id property in the local cache service.
 };
 
 /**
@@ -50,12 +50,21 @@ export function getCleanObject(obj){
  */
 export function cacheIn(obj, opts){
   var object = getCleanObject(obj);
-  // Copies `object.__remoteId` to `object._id`  It's ok if remoteIdProp is undefined.
-  object[opts.storedRemoteIdProp] = object[opts.remoteIdProp];
-  delete object[opts.remoteIdProp];
-  if (object[opts.storedCacheIdProp]) {
-    object[opts.cacheIdProp] = object[opts.storedCacheIdProp];
-    delete object[opts.storedCacheIdProp];
+  
+  // Don't copy the prop if it's already in place.  Calls from create-or-update.js, for example,
+  // will already have the correct properties in place because that hook runs after this one.
+  if (object[opts.storedRemoteIdProp] === undefined) {
+    // Copies `object.__remoteId` to `object._id`  It's ok if remoteIdProp is undefined.
+    object[opts.storedRemoteIdProp] = object[opts.remoteIdProp];
+    delete object[opts.remoteIdProp];
+  }
+
+  // Don't copy the cacheIdProp if it's already in place.
+  if (object[opts.storedCacheIdProp] === undefined) {
+    if (object[opts.cacheIdProp]) {
+      object[opts.storedCacheIdProp] = object[opts.cacheIdProp];
+      delete object[opts.cacheIdProp];
+    }
   }
   return object;
 }
@@ -73,8 +82,8 @@ export function cacheOut(obj, opts){
 
   // The id that it was stored under is copied to another attribute
   // on data retrieved from the cache.
-  object[opts.storedCacheIdProp] = object[opts.cacheIdProp];
-  delete object[opts.cacheIdProp];
+  object[opts.cacheIdProp] = object[opts.storedCacheIdProp];
+  delete object[opts.storedCacheIdProp];
   return object;
 }
 
