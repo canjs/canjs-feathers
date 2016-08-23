@@ -2,6 +2,7 @@ import canEvent from 'can-event';
 import hydrate from './hooks/hydrate/';
 import cache from './hooks/cache/';
 import translateIds from './hooks/translate-ids/';
+import createOrUpdate from './hooks/create-or-update/';
 import setupModelStore from './new-instance/model-store';
 import setupModelStoreWithCache from './new-instance/model-store-cache';
 
@@ -139,6 +140,9 @@ export default function ObservableService(options = {}){
       all: [
         // Prevent overwriting the idProp of the cached data.
         translateIds(service.cacheOptions)
+      ],
+      create: [
+        createOrUpdate(service.cacheOptions)
       ]
     });
 

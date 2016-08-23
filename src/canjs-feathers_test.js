@@ -360,11 +360,10 @@ QUnit.test('cacheService tests.', function(assert) {
   // that we created earlier.  Then create an instance directly in the cacheService.
   }).then(response => {
     assert.ok(response.get, 'The cacheService hydrates into DefineMaps & DefineLists.');
-    assert.deepEqual(response[0].get(), {
-      _id: 0,
-      __cacheId: 1,
-      model: 'T1000'
-    }, 'correct ids set on the data');
+    let robot = response[0];
+    assert.equal(robot.__cacheId, 1, 'got the correct __cacheId');
+    assert.equal(robot._id, 0, 'got the correct _id');
+    assert.equal(robot.model, 'T1000', 'robot model number still present');
 
     return robotService.cacheService.create({
       model: 'T8000'
@@ -386,6 +385,14 @@ QUnit.test('cacheService tests.', function(assert) {
     assert.ok(instance instanceof Robot, 'got Model instance');
     assert.equal(instance._id, undefined, 'no remote _id is assigned to the data');
     assert.equal(instance.__cacheId, 3, 'the data has a __cacheId');
+
+    // Save the robot.
+    return instance.save();
+
+  }).then(instance => {
+    assert.ok(instance._id, 'got an _id');
+    assert.ok(instance instanceof Robot, 'got Model instance');
+    assert.ok(instance.__cacheId, 3, 'got correct cached instance');
     done();
   });
 });
