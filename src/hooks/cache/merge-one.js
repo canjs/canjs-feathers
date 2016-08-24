@@ -5,7 +5,7 @@
  */
 const defaults = {};
 
-module.exports = function(options){
+export default function(options){
   options = Object.assign({}, defaults, options);
 
   return function(hook){
@@ -15,8 +15,7 @@ module.exports = function(options){
       return hook;
     }
 
-    const idProp = this.idProp,
-      service = this,
+    const service = this,
       cacheService = this.cacheService,
       resultsCameFromCache = hook.params.resultsCameFromCache;
 
@@ -26,11 +25,15 @@ module.exports = function(options){
         // the remote service.
         if (resultsCameFromCache) {
           // service[hook.method]()
+          console.log('results from cache!');
 
         // This was a normal request, so save the result to the cache.
         } else {
           cacheService.create(response.get()).then(() => {
             resolve(hook);
+          })
+          .catch(err => {
+            console.log(err);
           });
         }
       }

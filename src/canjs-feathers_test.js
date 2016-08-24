@@ -74,7 +74,7 @@ const robotService = new Connection({
   service: feathers.service('v1/robots'),
   cache: {
     service: feathers.service('v1/robots/_cache'),
-    cacheIdProp: 'id'
+    storedCacheIdProp: 'id'
   },
   idProp: '_id',
   Map: Robot,
@@ -376,23 +376,27 @@ QUnit.test('cacheService tests.', function(assert) {
     assert.equal(instance._id, undefined, 'no remote _id is assigned to the data');
     assert.equal(instance.__cacheId, 2, 'the data has a __cacheId');
 
-    return new Robot({
+    var robot = new Robot({
       model: 'T9000'
-    }).cache();
+    });
+    assert.equal(robot._id, undefined, 'instances do not automatically receive an id');
+    assert.equal(robot.__cacheId, undefined, 'instances do not automatically receive a __cacheId');
+    return robot.cache();
 
   // Verify that the new instance was saved to the cache.
   }).then(instance => {
     assert.ok(instance instanceof Robot, 'got Model instance');
     assert.equal(instance._id, undefined, 'no remote _id is assigned to the data');
     assert.equal(instance.__cacheId, 3, 'the data has a __cacheId');
+    robotService.four = true;
 
     // Save the robot.
     return instance.save();
 
   }).then(instance => {
-    assert.ok(instance._id, 'got an _id');
+    assert.equal(instance._id, 1, 'got an _id');
     assert.ok(instance instanceof Robot, 'got Model instance');
-    assert.ok(instance.__cacheId, 3, 'got correct cached instance');
+    assert.equal(instance.__cacheId, 3, 'got correct cached instance');
     done();
   });
 });

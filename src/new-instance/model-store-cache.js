@@ -2,11 +2,11 @@ import deepAssign from 'can-util/js/deep-assign/deep-assign';
 
 export default function(props, Map, service, parentNewInstanceFn){
   let id = props[service.idProp],
-    cacheId = props[service.cacheOptions.storedCacheIdProp],
+    cacheId = props[service.cacheOptions.cacheIdProp],
     cachedInst;
 
   if (cacheId !== null && cacheId !== undefined) {
-    cacheId = 'cache:' + props[service.cacheOptions.storedCacheIdProp];
+    cacheId = 'cache:' + props[service.cacheOptions.cacheIdProp];
   }
 
   let haveId = id !== null && id !== undefined;

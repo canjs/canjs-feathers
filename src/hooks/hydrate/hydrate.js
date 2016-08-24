@@ -6,7 +6,7 @@
  */
 const defaults = {};
 
-module.exports = function(options){
+export default function(options){
   options = Object.assign({}, defaults, options);
 
   return function(hook){

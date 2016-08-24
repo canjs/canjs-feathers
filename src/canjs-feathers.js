@@ -44,10 +44,10 @@ export default function ObservableService(options = {}){
         remoteIdProp: options.idProp,
         // Where the remote id is stored while cached.
         storedRemoteIdProp: options.cache.storedRemoteIdProp || '__remoteId',
-        // The id property in the local cache service.
-        cacheIdProp: options.cache.cacheIdProp,
         // A reference to the id in the cache.
-        storedCacheIdProp: options.cache.storedCacheIdProp || '__cacheId'
+        cacheIdProp: options.cache.cacheIdProp || '__cacheId',
+        // The id property in the local cache service.
+        storedCacheIdProp: options.cache.storedCacheIdProp
       }
     });
   }
