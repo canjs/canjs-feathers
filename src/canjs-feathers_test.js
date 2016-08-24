@@ -428,6 +428,11 @@ QUnit.test('cacheService tests.', function(assert) {
       _id: 0,
       model: 'T1000'
     }, 'retrieved the correct instance');
-    done();
+
+    return instance.destroy().then(() => {
+      assert.notOk(robotService.store[0], 'instance was removed from the main service.');
+      assert.notOk(robotService.cacheService.store[1], 'instance was removed from the cache service.');
+      done();
+    });
   });
 });

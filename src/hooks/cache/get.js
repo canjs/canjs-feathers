@@ -18,7 +18,6 @@ export default function(options){
 
     return new Promise(function(resolve, reject){
       function processRequest(response){
-        debugger;
         // If we gotRecords, set hook.result so we can return the results faster.
         // If $fromCache was provided, always set hook.result to skip the network request.
         let gotRecords = !response.data ? !!response.length : !!response.data.length;

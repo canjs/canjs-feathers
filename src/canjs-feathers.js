@@ -208,7 +208,7 @@ export default function ObservableService(options = {}){
 
     destroy(){
       let id = this[Map.idProp];
-      if (id) {
+      if (id !== undefined) {
         return service.remove(id).then(response => {
           Map.dispatch('destroyed', [response]);
           return response;
@@ -267,7 +267,7 @@ export default function ObservableService(options = {}){
       cache.mergeOne()
     ],
     remove: [
-      // cache.removeOne()
+      cache.remove(service.cacheOptions)
     ]
   });
 

@@ -105,6 +105,7 @@ export default function(options){
 
       switch (hook.method) {
         // before find
+        // TODO: Modify params so that remoteId is converted to cache id.
         case 'find':
           break;
 
@@ -164,6 +165,7 @@ export default function(options){
 
         // after remote
         case 'remove':
+          // hook.result = cacheOut(hook.result, options);
           break;
       }
 
