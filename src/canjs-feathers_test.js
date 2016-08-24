@@ -388,15 +388,46 @@ QUnit.test('cacheService tests.', function(assert) {
     assert.ok(instance instanceof Robot, 'got Model instance');
     assert.equal(instance._id, undefined, 'no remote _id is assigned to the data');
     assert.equal(instance.__cacheId, 3, 'the data has a __cacheId');
-    robotService.four = true;
 
-    // Save the robot.
+    // Save the robot (create on the server and get an _id).
     return instance.save();
 
+  // Verify we got an _id from the server and it got merged in.
   }).then(instance => {
     assert.equal(instance._id, 1, 'got an _id');
     assert.ok(instance instanceof Robot, 'got Model instance');
     assert.equal(instance.__cacheId, 3, 'got correct cached instance');
+
+    // Update the instance on the server.
+    instance.model = 'Series 70';
+    return instance.save();
+
+  // Make sure the instance updated properly.  Then check the cache.
+  }).then(instance => {
+    assert.equal(instance._id, 1, 'kept same _id');
+    assert.equal(instance.model, 'Series 70', 'got same name back after update');
+
+    // Check the cache.
+    return robotService.cacheService.get(instance.__cacheId);
+
+  // Make sure the cached instance updated to the same name.
+  }).then(instance => {
+    assert.equal(instance._id, 1, 'kept same _id');
+    assert.equal(instance.model, 'Series 70', 'cache instance name updated, too');
+
+    return instance.patch({model: 'T80'});
+  }).then(instance => {
+    assert.equal(instance._id, 1, 'kept same _id');
+    assert.equal(instance.model, 'T80', 'instance.patch worked');
+
+    // Use fall-through cache to get the first record
+    return Robot.get(0);
+  }).then(instance => {
+    assert.equal(instance.__cacheId, 1, 'Got the correct cacheId.');
+    assert.deepEqual(instance.serialize(), {
+      _id: 0,
+      model: 'T1000'
+    }, 'retrieved the correct instance');
     done();
   });
 });

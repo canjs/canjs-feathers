@@ -122,10 +122,6 @@ export default function(options){
           hook.data = cacheIn(hook.data, options);
           break;
 
-        // before patch
-        case 'patch':
-          break;
-
         // before remove
         case 'remove':
           break;
@@ -153,6 +149,7 @@ export default function(options){
 
         // after get
         case 'get':
+          hook.result = cacheOut(hook.result, options);
           break;
 
         // after create
@@ -163,10 +160,6 @@ export default function(options){
         // after update
         case 'update':
           hook.result = cacheOut(hook.result, options);
-          break;
-
-        // after patch
-        case 'patch':
           break;
 
         // after remote

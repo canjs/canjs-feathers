@@ -87,7 +87,7 @@ export default function ObservableService(options = {}){
      * If a cacheService was provided and `$fromCache` is provided in the params, the
      * query will only run against the `cacheService`.
      */
-    get(id, params){
+    get(id, params = {}){
       if (service.cacheService && params.$fromCache) {
         delete params.$fromCache;
         return service.cacheService.get(id, params);
@@ -237,7 +237,9 @@ export default function ObservableService(options = {}){
     find: [
       cache.find()
     ],
-    get: [],
+    get: [
+      cache.get(service.cacheOptions)
+    ],
     create: [],
     update: [],
     patch: [],
@@ -251,6 +253,9 @@ export default function ObservableService(options = {}){
     ],
     find: [
       cache.merge()
+    ],
+    get: [
+      cache.mergeOne()
     ],
     create: [
       cache.mergeOne()

@@ -21,16 +21,14 @@ export default function(options){
 
     return new Promise(function(resolve, reject){
       function processResult(response){
-        // We got the result from the cache, so we need to make the request to
-        // the remote service.
+        // If resultsCameFromCache, the cache has already been updated, resolve.
         if (resultsCameFromCache) {
-          // service[hook.method]()
-          console.log('results from cache!');
+          return resolve(hook);
 
         // This was a normal request, so save the result to the cache.
         } else {
           cacheService.create(response.get()).then(() => {
-            resolve(hook);
+            return resolve(hook);
           })
           .catch(err => {
             console.log(err);
@@ -39,9 +37,11 @@ export default function(options){
       }
 
       if (resultsCameFromCache) {
+        // We got the result from the cache, so we need to make the request to
+        // the remote service.
         let params = Object.assign({}, hook.params);
         delete params.resultsCameFromCache;
-        params.query.$skipCache = true;
+        params.$skipCache = true;
         service.get(hook.id, params)
           .then(response => processResult(response))
           .catch(e => {
@@ -62,4 +62,4 @@ export default function(options){
       }
     });
   };
-};
+}

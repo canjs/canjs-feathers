@@ -45,7 +45,8 @@ export default function(options){
             if (data.length) {
               var updateData = deepAssign({}, hook.data);
               delete updateData[options.storedCacheIdProp];
-              service.update(hook.data[options.storedCacheIdProp], updateData).then(updateResponse => {
+              var id = hook.data[options.storedCacheIdProp] || data[0][options.cacheIdProp];
+              service.update(id, updateData).then(updateResponse => {
                 hook.result = updateResponse;
                 resolve(hook);
               })
@@ -72,4 +73,4 @@ export default function(options){
 
     });
   };
-};
+}
