@@ -12,6 +12,8 @@ npm install canjs-feathers --save
 ## Documentation
 Please refer to the [Feathers + CanJS](http://docs.feathersjs.com/frameworks/canjs.html) page in the official Feathers docs.
 
+> Note: The 1.0.0 version of `canjs-feathers` is only compatible with CanJS 3.0 and DefineMaps (the can-define plugin).
+
 ## Complete Example
 Here's an example of setting up a feathers connection and Account Model for your CanJS application.
 ```js
