@@ -1,47 +1,95 @@
 {
   "name": "canjs-feathers",
-  "description": "CanJS model implementation using canjs-feathers",
-  "version": "0.1.0",
+  "version": "1.0.0-pre.3",
+  "description": "A set of utils for using CanJS with Feathers on the client.",
+  "homepage": "https://github.com/feathersjs/canjs-feathers",
   "repository": {
     "type": "git",
-    "url": "https://github.com/feathersjs/canjs-feathers.git"
+    "url": "git://github.com/feathersjs/canjs-feathers.git"
   },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/feathersjs/canjs-feathers/issues"
+  "author": {
+    "name": "Marshall Thompson",
+    "email": "marshall@creativeideal.net",
+    "url": "https://github.com/feathersjs"
   },
-  "homepage": "https://github.com/feathersjs/canjs-feathers",
-  "keywords": [
-    "canjs",
-    "feathers-plugin"
-  ],
-  "author": "David Luecke <daff@neyeon.com> (https://feathersjs.com)",
-  "contributors": [],
-  "engines": {
-    "node": ">=0.10.0"
-  },
-  "main": "lib/feathers.js",
   "scripts": {
-    "prepublish": "npm run build",
-    "publish": "git push origin --tags",
-    "build": "rm -rf dist/ && mkdir -p dist && browserify lib/feathers.js --standalone canFeathers --outfile dist/canjs-feathers.js",
+    "preversion": "npm test && npm run build",
+    "version": "git commit -am \"Update dist for release\" && git checkout -b release && git add -f dist/",
+    "postversion": "git push --tags && git checkout master && git branch -D release && git push",
+    "testee": "testee test/test.html --browsers firefox",
+    "test": "npm run jshint && npm run testee",
+    "jshint": "jshint src/.",
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
-    "jshint": "jshint lib/. test/. --config",
-    "testee": "node test/server & testee test.html --browsers firefox --reporter Spec",
-    "test": "npm run jshint && npm run testee"
+    "build": "node build.js",
+    "document": "documentjs",
+    "develop": "done-serve --static --develop --port 8081"
   },
-  "directories": {
-    "lib": "lib"
+  "main": "dist/cjs/canjs-feathers",
+  "browser": {
+    "transform": [
+      "cssify"
+    ]
+  },
+  "browserify": {
+    "transform": [
+      "cssify"
+    ]
+  },
+  "keywords": [
+    "feathers",
+    "canjs",
+    "can",
+    "plugin"
+  ],
+  "system": {
+    "main": "canjs-feathers",
+    "configDependencies": [
+      "live-reload"
+    ],
+    "npmIgnore": [
+      "documentjs",
+      "testee",
+      "generator-donejs",
+      "donejs-cli",
+      "steal-tools"
+    ],
+    "directories": {
+      "lib": "src"
+    },
+    "npmAlgorithm": "flat"
+  },
+  "dependencies": {
+    "can-define": "^0.7.19",
+    "can-event": "^3.0.0-pre.6",
+    "can-util": "^3.0.0-pre.34",
+    "feathers-commons": "^0.7.4"
   },
   "devDependencies": {
-    "body-parser": "^1.12.4",
-    "bower": "^1.4.1",
-    "browserify": "^10.2.4",
-    "feathers": "^1.1.0-pre.0",
-    "feathers-client": "^0.1.0",
-    "jshint": "^2.8.0",
-    "testee": "^0.2.0"
+    "can-fixture": "^0.4.0-pre.11",
+    "can-stache": "^3.0.0-pre.15",
+    "cssify": "^0.6.0",
+    "documentjs": "^0.4.2",
+    "done-serve": "^0.3.0-pre.0",
+    "donejs-cli": "^0.10.0-pre.0",
+    "engine.io-client": "^1.6.11",
+    "feathers": "^2.0.1",
+    "feathers-authentication": "^0.7.9",
+    "feathers-hooks": "^1.5.6",
+    "feathers-memory": "^0.7.5",
+    "feathers-reactive": "^0.3.1",
+    "feathers-rest": "^1.4.3",
+    "feathers-socketio": "^1.4.1",
+    "generator-donejs": "^0.10.0-pre.0",
+    "jquery": "^3.1.0",
+    "jshint": "^2.9.2",
+    "jwt-decode": "^2.1.0",
+    "rxjs": "^5.0.0-beta.11",
+    "socket.io-parser": "^2.2.6",
+    "steal": "^0.16.35",
+    "steal-qunit": "^0.1.1",
+    "steal-tools": "^0.16.0",
+    "testee": "^0.2.4"
   }
 }

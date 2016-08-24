@@ -1,72 +1,149 @@
-# CanJS Feathers
+# canjs-feathers
 
 [![Build Status](https://travis-ci.org/feathersjs/canjs-feathers.png?branch=master)](https://travis-ci.org/feathersjs/canjs-feathers)
 
-CanJS model implementation that connects to Feathers services through [feathers-client](https://github.com/feathersjs/feathers-client).
+A set of utils for using CanJS with Feathers client.
 
-## Getting Started
+## Installation
+```
+npm install canjs-feathers --save
+```
 
-Use NPM
+## Documentation
+Please refer to the [Feathers + CanJS](http://docs.feathersjs.com/frameworks/canjs.html) page in the official Feathers docs.
 
-    npm install canjs-feathers
+## Complete Example
+Here's an example of setting up a feathers connection and Account Model for your CanJS application.
+```js
+import feathers from 'feathers/client';
+import socketio from 'feathers-socketio/client';
+import hooks from 'feathers-hooks';
+import io from 'socket.io-client';
+import rxjs from 'rxjs';
+import rx from 'feathers-reactive';
 
-Or Bower to install the package
+const host = 'http://localhost:3030';
+const socket = io(host, {
+  transports: ['websocket'],
+  forceReconnect: true
+});
+const app = feathers()
+	// Use the feathers-reactive plugin for live-updating lists!
+  .configure(rx(rxjs, {
+    idField: '_id'
+  }))
+  .configure(hooks())
+  .configure(socketio(socket));
 
-    bower install canjs-feathers
+// Model creation would usually go in its own file,
+// but here it is inline for simplicity.
+import DefineMap from 'can-define/map/';
+import DefineList from 'can-define/list/';
+import Connection from 'canjs-feathers';
 
-Or [download the JavaScript](https://github.com/feathersjs/canjs-feathers/archive/master.zip) and put it in your CanJS project folder. Use it with any module loader (AMD or CommonJS) or without via the global `canFeathers` method.
+// Define a Robot Model.
+const Robot = DefineMap.extend('Robot', {
+	seal: false
+}, {
+	'_id': '*',
+	model: {type: 'string'}
+});
 
-### Set up a connection
+// Define a Robot.List.
+Robot.List = DefineList.extend({
+	'*': Robot
+});
 
-CanJS models can be created by passing a Feathers client. You can use any connector supported by feathers-client (jQuery, Request, Superagent, Socket.io or Primus). First, either load or include the feathers-client and canjs-feathers JavaScript:
+// Combine the best of both CanJS and Feathers.
+new Connection({
+	service: app.service('v1/robots'),
+	idProp: '_id',
+	Map: Robot
+});
+
+// You can now use `find` directly from the Robot model.
+Robot.find({model: 'T1000'}).then(response => {
+	// The returned data will be a List (Observable array) of Robot instances.
+	console.log(response);
+});
+
+// Using the service directly will also return Robot instances.
+app.service('v1/robots').find({}).then(response => {
+	console.log(response); // --> Robot instances!
+});
+```
+
+## Usage
+
+### ES6 use
+
+With StealJS, you can import this module directly in a template that is autorendered:
+
+```js
+import plugin from 'canjs-feathers';
+```
+
+### CommonJS use
+
+Use `require` to load `canjs-feathers` and everything else
+needed to create a template that uses `canjs-feathers`:
+
+```js
+var plugin = require("canjs-feathers");
+```
+
+## AMD use
+
+Configure the `can` and `jquery` paths and the `canjs-feathers` package:
 
 ```html
-<script type="text/javascript" src="node_modules/feathers-client/dist/feathers.js"></script>
-<script type="text/javascript" src="node_modules/canjs-feathers/dist/canjs-feathers.js"></script>
+<script src="require.js"></script>
+<script>
+	require.config({
+	    paths: {
+	        "jquery": "node_modules/jquery/dist/jquery",
+	        "can": "node_modules/canjs/dist/amd/can"
+	    },
+	    packages: [{
+		    	name: 'canjs-feathers',
+		    	location: 'node_modules/canjs-feathers/dist/amd',
+		    	main: 'lib/canjs-feathers'
+	    }]
+	});
+	require(["main-amd"], function(){});
+</script>
 ```
 
-```js
-var feathers = require('feathers-client');
-var canFeathers = require('canjs-feathers');
+### Standalone use
+
+Load the `global` version of the plugin:
+
+```html
+<script src='./node_modules/canjs-feathers/dist/global/canjs-feathers.js'></script>
 ```
 
-Let's use Socket.io for the example:
+## Contributing
 
-```js
-// Connect to the Socket
-var socket = io();
-// Create feathers-client application connecting to the socket
-var app = feathers().configure(feathers.socketio(socket));
+### Making a Build
 
-// Pass the app to get a base model
-var Model = canFeathers(app);
-// Then extend it with `resource` set to the service name.
-var Todo = Model.extend({
-  resource: 'todos'
-}, {});
+To make a build of the distributables into `dist/` in the cloned repository run
+
+```
+npm install
+node build
 ```
 
-Then we can use it like any other CanJS model:
+### Running the tests
 
-```js
-var myTodo = new Todo({
-  text: 'A Todo',
-  complete: false
-});
+Tests can run in the browser by opening a webserver and visiting the `test.html` page.
+Automated tests that run the tests from the command line in Firefox can be run with
 
-myTodo.save().then(function() {
-  myTodo.attr('text', 'Update Todo');
-  myTodo.save();
-});
 ```
-
-## Authors
-
-- [David Luecke](https://github.com/daffl)
-- [Marshall Thompson](https://github.com/marshallswain)
+npm test
+```
 
 ## License
 
-Copyright (c) 2015 David Luecke
+Copyright (c) 2016, FeathersJS
 
 Licensed under the [MIT license](LICENSE).

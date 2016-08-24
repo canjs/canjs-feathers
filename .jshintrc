@@ -1,9 +1,12 @@
 {
-  "node": true,
+  "globals": {
+    "steal":true
+  },
   "browser": true,
+  "node": true,
   "esnext": true,
   "bitwise": true,
-  "camelcase": false,
+  "camelcase": true,
   "curly": true,
   "eqeqeq": true,
   "immed": true,
@@ -11,24 +14,11 @@
   "latedef": "nofunc",
   "newcap": false,
   "noarg": true,
-  "quotmark": "single",
   "regexp": true,
   "undef": true,
   "unused": true,
   "strict": false,
   "trailing": true,
   "smarttabs": true,
-  "white": false,
-  "browser": true,
-  "globals": {
-    "it": true,
-    "describe": true,
-    "before": true,
-    "beforeEach": true,
-    "after": true,
-    "afterEach": true,
-    "exports": true,
-    "assert": true,
-    "can": true
-  }
+  "white": false
 }
