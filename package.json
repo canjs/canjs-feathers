@@ -27,16 +27,6 @@
     "develop": "done-serve --static --develop --port 8081"
   },
   "main": "dist/cjs/canjs-feathers",
-  "browser": {
-    "transform": [
-      "cssify"
-    ]
-  },
-  "browserify": {
-    "transform": [
-      "cssify"
-    ]
-  },
   "keywords": [
     "feathers",
     "canjs",
@@ -69,7 +59,6 @@
   "devDependencies": {
     "can-fixture": "^0.4.0-pre.11",
     "can-stache": "^3.0.0-pre.15",
-    "cssify": "^0.6.0",
     "documentjs": "^0.4.2",
     "done-serve": "^0.3.0-pre.0",
     "donejs-cli": "^0.10.0-pre.0",
