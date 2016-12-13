@@ -51,13 +51,13 @@
     "npmAlgorithm": "flat"
   },
   "dependencies": {
-    "can-define": "^0.7.19",
+    "can-define": "^1.0.5",
     "can-event": "^3.0.0-pre.6",
     "can-util": "^3.0.0-pre.34",
-    "feathers-commons": "^0.7.4"
+    "feathers-commons": "^0.8.7"
   },
   "devDependencies": {
-    "can-fixture": "^0.4.0-pre.11",
+    "can-fixture": "^1.0.10",
     "can-stache": "^3.0.0-pre.15",
     "documentjs": "^0.4.2",
     "done-serve": "^0.3.0-pre.0",
@@ -66,8 +66,8 @@
     "feathers": "^2.0.1",
     "feathers-authentication": "^0.7.9",
     "feathers-hooks": "^1.5.6",
-    "feathers-memory": "^0.7.5",
-    "feathers-reactive": "^0.3.1",
+    "feathers-memory": "^1.0.1",
+    "feathers-reactive": "^0.4.1",
     "feathers-rest": "^1.4.3",
     "feathers-socketio": "^1.4.1",
     "generator-donejs": "^0.10.0-pre.0",
@@ -79,6 +79,6 @@
     "steal": "^0.16.35",
     "steal-qunit": "^0.1.1",
     "steal-tools": "^0.16.0",
-    "testee": "^0.2.4"
+    "testee": "^0.3.0"
   }
 }
