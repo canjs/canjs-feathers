@@ -1,6 +1,6 @@
 {
   "name": "canjs-feathers",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A set of utils for using CanJS with Feathers on the client.",
   "homepage": "https://github.com/feathersjs/canjs-feathers",
   "repository": {
@@ -51,34 +51,34 @@
     "npmAlgorithm": "flat"
   },
   "dependencies": {
-    "can-define": "^0.7.19",
-    "can-event": "^3.0.0-pre.6",
-    "can-util": "^3.0.0-pre.34",
-    "feathers-commons": "^0.7.4"
+    "can-define": "^1.0.26",
+    "can-event": "^3.4.0",
+    "can-util": "^3.8.4",
+    "feathers-commons": "^0.8.7"
   },
   "devDependencies": {
     "can-fixture": "^0.4.0-pre.11",
     "can-stache": "^3.0.0-pre.15",
     "documentjs": "^0.4.2",
-    "done-serve": "^0.3.0-pre.0",
-    "donejs-cli": "^0.10.0-pre.0",
-    "engine.io-client": "^1.6.11",
-    "feathers": "^2.0.1",
+    "done-serve": "^1.0.0",
+    "donejs-cli": "^1.0.1",
+    "engine.io-client": "^3.1.1",
+    "feathers": "^2.1.3",
     "feathers-authentication": "^0.7.9",
     "feathers-hooks": "^1.5.6",
     "feathers-memory": "^0.7.5",
-    "feathers-reactive": "^0.3.1",
+    "feathers-reactive": "^0.4.1",
     "feathers-rest": "^1.4.3",
     "feathers-socketio": "^1.4.1",
-    "generator-donejs": "^0.10.0-pre.0",
-    "jquery": "^3.1.0",
+    "generator-donejs": "^1.0.0",
+    "jquery": "^3.2.1",
     "jshint": "^2.9.2",
     "jwt-decode": "^2.1.0",
-    "rxjs": "^5.0.0-beta.11",
+    "rxjs": "^5.4.1",
     "socket.io-parser": "^2.2.6",
-    "steal": "^0.16.35",
-    "steal-qunit": "^0.1.1",
-    "steal-tools": "^0.16.0",
-    "testee": "^0.2.4"
+    "steal": "^1.3.1",
+    "steal-qunit": "^1.0.1",
+    "steal-tools": "^1.2.0",
+    "testee": "^0.3.0"
   }
 }
