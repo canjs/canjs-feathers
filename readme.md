@@ -1,5 +1,7 @@
 # canjs-feathers
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/canjs/canjs-feathers.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://travis-ci.org/feathersjs/canjs-feathers.png?branch=master)](https://travis-ci.org/feathersjs/canjs-feathers)
 
 A set of utils for using CanJS with Feathers client.
