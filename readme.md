@@ -6,6 +6,8 @@
 
 A set of utils for using CanJS with Feathers client.
 
+***[can-connect-feathers](https://github.com/canjs/can-connect-feathers) is the better option for connecting your CanJS application to Feathers.***
+
 ## Installation
 ```
 npm install canjs-feathers --save
