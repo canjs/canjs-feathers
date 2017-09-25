@@ -67,7 +67,7 @@
     "feathers-authentication": "^1.2.2",
     "feathers-hooks": "^2.0.1",
     "feathers-memory": "^1.1.0",
-    "feathers-reactive": "^0.4.1",
+    "feathers-reactive": "^0.5.3",
     "feathers-rest": "^1.4.3",
     "feathers-socketio": "^1.4.1",
     "generator-donejs": "^1.0.5",
