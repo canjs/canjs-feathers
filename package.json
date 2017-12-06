@@ -74,7 +74,7 @@
     "jquery": "^3.2.1",
     "jshint": "^2.9.2",
     "jwt-decode": "^2.1.0",
-    "rxjs": "^5.4.1",
+    "rxjs": "^5.5.5",
     "socket.io-parser": "^2.2.6",
     "steal": "^1.5.2",
     "steal-qunit": "^1.0.1",
