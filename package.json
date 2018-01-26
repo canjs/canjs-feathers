@@ -53,7 +53,7 @@
   "dependencies": {
     "can-define": "^1.0.26",
     "can-event": "^3.4.0",
-    "can-util": "^3.8.4",
+    "can-util": "^3.11.1",
     "feathers-commons": "^0.8.7"
   },
   "devDependencies": {
