@@ -60,7 +60,7 @@
     "can-fixture": "^1.0.13",
     "can-stache": "^3.0.0-pre.15",
     "documentjs": "^0.4.2",
-    "done-serve": "^1.2.0",
+    "done-serve": "^2.2.0",
     "donejs-cli": "^1.0.1",
     "engine.io-client": "^3.1.1",
     "feathers": "^2.1.3",
