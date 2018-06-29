@@ -58,7 +58,7 @@
   },
   "devDependencies": {
     "can-fixture": "^1.0.13",
-    "can-stache": "^3.0.0-pre.15",
+    "can-stache": "^4.7.1",
     "documentjs": "^0.4.2",
     "done-serve": "^1.2.0",
     "donejs-cli": "^1.0.1",
