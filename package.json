@@ -51,7 +51,7 @@
     "npmAlgorithm": "flat"
   },
   "dependencies": {
-    "can-define": "^1.0.26",
+    "can-define": "^2.5.12",
     "can-event": "^3.4.0",
     "can-util": "^3.8.4",
     "feathers-commons": "^0.8.7"
