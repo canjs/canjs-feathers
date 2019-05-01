@@ -71,7 +71,7 @@
     "feathers-rest": "^1.4.3",
     "feathers-socketio": "^1.4.1",
     "generator-donejs": "^1.0.5",
-    "jquery": "^3.2.1",
+    "jquery": "^3.4.1",
     "jshint": "^2.9.2",
     "jwt-decode": "^2.1.0",
     "rxjs": "^5.4.1",
